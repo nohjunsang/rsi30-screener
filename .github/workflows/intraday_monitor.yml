@@ -1,0 +1,43 @@
+name: Intraday RSI Monitor
+
+# 미국 정규장 시간(09:30~16:00 ET)을 UTC로 환산해 여유있게 커버.
+# EDT(서머타임) 기준 13:30~20:00 UTC, EST 기준 14:30~21:00 UTC
+# -> 13:00~21:45 UTC 범위로 잡아서 두 경우 다 포함되도록 함.
+# (실제 장중인지 최종 판단은 intraday_monitor.py 내부의 zoneinfo 체크가
+#  다시 한 번 정확하게 걸러줌 - 여기 cron은 "이 시간대에는 한 번 깨워서
+#  확인해봐" 정도의 느슨한 트리거임)
+on:
+  schedule:
+    - cron: '*/15 13-21 * * 1-5'   # 평일 13:00~21:45 UTC, 15분 간격
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 중복 알림 방지용 상태파일(alerted_today.json)을
+                    # 실행 후 저장소에 다시 커밋하기 위해 필요
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
+
+      - name: 장중 모니터링 실행
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python intraday_monitor.py
+
+      - name: 상태파일(중복방지용) 저장소에 반영
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add alerted_today.json
+          git diff --staged --quiet || git commit -m "chore: update alerted_today.json [skip ci]"
+          git push
