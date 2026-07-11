@@ -63,10 +63,14 @@ def main():
     if not alerts:
         msg = f"[{now_ny.strftime('%Y-%m-%d %H:%M')} ET] 새로운 4H 신호 없음"
         if args.test:
+            # 테스트 모드일 때만 "신호 없음"도 전송 (실제로 잘 도는지 확인용)
             msg = "🧪 [테스트] " + msg + " (지금 조건 충족하는 종목이 하나도 없음)"
-        print(msg)
-        send_telegram(msg)
-        if not args.test:
+            print(msg)
+            send_telegram(msg)
+        else:
+            # 평상시엔 30분마다 도는 스캔이라, 신호 없을 때마다 텔레그램을
+            # 보내면 스팸이 되므로 콘솔 로그만 남기고 조용히 넘어감
+            print(msg)
             state.save()
         return
 
