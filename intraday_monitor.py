@@ -61,11 +61,12 @@ def main():
     alerts, state = scan_h4_alerts(state_filename=state_filename)
 
     if not alerts:
-        msg = f"[{now_ny}] 새로운 4H 신호 없음"
+        msg = f"[{now_ny.strftime('%Y-%m-%d %H:%M')} ET] 새로운 4H 신호 없음"
         if args.test:
-            print("🧪 [테스트] " + msg + " (지금 조건 충족하는 종목이 하나도 없음 - 휴장일이라 최근 종가 기준으로도 조건 만족 종목이 없을 수 있음)")
-        else:
-            print(msg)
+            msg = "🧪 [테스트] " + msg + " (지금 조건 충족하는 종목이 하나도 없음)"
+        print(msg)
+        send_telegram(msg)
+        if not args.test:
             state.save()
         return
 
