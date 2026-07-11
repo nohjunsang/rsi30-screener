@@ -1,38 +1,70 @@
 """
 data.py
-S&P500 티커 목록 및 가격 데이터 수집
+캐시(universe_cache.json) 기반 스캔 유니버스 조회 + 가격 데이터 다운로드.
+
+universe_cache.json은 refresh_cache.py가 만들며, {ticker: {sector, market_cap}}
+형태의 전체 유니버스 정보와, 시총 기준과 무관하게 항상 포함할 티커 목록
+(always_include = 섹터별 top N + 관심종목)을 담고 있음.
 """
 
-import io
+import json
+from pathlib import Path
 
 import pandas as pd
-import requests
 import yfinance as yf
 
-from config import LOOKBACK_DAYS
+from config import LOOKBACK_DAYS, H4_LOOKBACK_PERIOD, MARKET_CAP_THRESHOLD
+
+CACHE_FILE = Path(__file__).parent / "universe_cache.json"
+
+_cache_memo = None
 
 
-def get_sp500_tickers() -> list[str]:
-    """S&P500 구성종목 티커 리스트를 위키피디아에서 가져옴.
-    시총 3000억달러 이상 기업은 거의 전부 S&P500에 포함되어 있어
-    이 유니버스만으로도 스크리닝 커버리지는 충분함.
+def _load_cache():
+    global _cache_memo
+    if _cache_memo is not None:
+        return _cache_memo
+    if not CACHE_FILE.exists():
+        return None
+    try:
+        _cache_memo = json.loads(CACHE_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    return _cache_memo
 
-    위키피디아가 User-Agent 없는 요청을 403으로 막기 때문에
-    requests로 먼저 받아온 뒤 pandas에 넘겨줌.
+
+def get_scan_universe() -> list[str]:
     """
-    url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-    resp = requests.get(url, headers=headers, timeout=10)
-    resp.raise_for_status()
+    캐시에서 (시가총액 >= MARKET_CAP_THRESHOLD 인 종목) + (always_include:
+    섹터별 시총 top N + 관심종목)을 합쳐서 스캔 대상 티커 리스트 반환.
+    캐시가 없으면 빈 리스트 (refresh_cache.py를 먼저 실행해야 함).
+    """
+    cache = _load_cache()
+    if not cache:
+        return []
 
-    table = pd.read_html(io.StringIO(resp.text))[0]
-    tickers = table["Symbol"].str.replace(".", "-", regex=False).tolist()
-    return tickers
+    records = cache.get("universe", {})
+    always_include = set(cache.get("always_include", []))
+
+    result = set(always_include)
+    for ticker, info in records.items():
+        cap = info.get("market_cap")
+        if cap is not None and cap >= MARKET_CAP_THRESHOLD:
+            result.add(ticker)
+
+    return sorted(result)
 
 
-def download_price_data(tickers: list[str]) -> pd.DataFrame:
-    """전체 티커에 대해 일봉 데이터를 배치로 다운로드"""
-    data = yf.download(
+def get_market_cap_from_cache(ticker: str):
+    cache = _load_cache()
+    if not cache:
+        return None
+    return cache.get("universe", {}).get(ticker, {}).get("market_cap")
+
+
+def download_daily_data(tickers: list[str]) -> pd.DataFrame:
+    """일봉 OHLC 배치 다운로드 (RSI/SMA/일목균형표 계산용)"""
+    return yf.download(
         tickers,
         period=LOOKBACK_DAYS,
         interval="1d",
@@ -41,10 +73,33 @@ def download_price_data(tickers: list[str]) -> pd.DataFrame:
         threads=True,
         progress=False,
     )
-    return data
 
 
-def get_market_cap(ticker: str):
-    """개별 티커의 시가총액 조회 (RSI 조건 통과한 종목만 호출해서 API 절약)"""
-    info = yf.Ticker(ticker).fast_info
-    return info.get("market_cap") or info.get("marketCap")
+def download_hourly_data(tickers: list[str]) -> pd.DataFrame:
+    """1시간봉 배치 다운로드 (4시간봉 리샘플링용)"""
+    return yf.download(
+        tickers,
+        period=H4_LOOKBACK_PERIOD,
+        interval="60m",
+        group_by="ticker",
+        auto_adjust=True,
+        threads=True,
+        progress=False,
+    )
+
+
+def extract_ticker_df(data: pd.DataFrame, ticker: str):
+    """다중 티커 yf.download 결과에서 개별 티커의 OHLC DataFrame 추출.
+    실패 시 None 반환 (해당 티커 스킵 처리용)"""
+    try:
+        if isinstance(data.columns, pd.MultiIndex):
+            df = data[ticker]
+        else:
+            df = data
+        cols = [c for c in ["Open", "High", "Low", "Close"] if c in df.columns]
+        if not cols:
+            return None
+        df = df[cols].dropna(how="all")
+        return df
+    except (KeyError, Exception):
+        return None

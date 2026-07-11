@@ -1,4 +1,4 @@
-name: EOD RSI Report
+name: EOD Signal Report
 
 # 미국 정규장 마감(16:00 ET) 이후 자동 실행.
 # UTC 21:15 = EDT(서머타임) 기준 마감 1시간15분 후, EST 기준 마감 15분 후
@@ -6,7 +6,10 @@ name: EOD RSI Report
 on:
   schedule:
     - cron: '15 21 * * 1-5'   # 평일(월~금, UTC 기준) 21:15
-  workflow_dispatch:           # Actions 탭에서 수동 실행 버튼도 사용 가능
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 상태파일/히스토리 커밋을 위해 필요
 
 jobs:
   run:
@@ -26,3 +29,13 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
+
+      - name: 상태파일/히스토리 저장소에 반영
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          for f in daily_state.json alert_history.json; do
+            [ -f "$f" ] && git add "$f"
+          done
+          git diff --staged --quiet || git commit -m "chore: update daily state/history [skip ci]"
+          git push

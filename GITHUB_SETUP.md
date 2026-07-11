@@ -47,27 +47,39 @@ git push -u origin main
    - Name: `TELEGRAM_BOT_TOKEN` / Value: (BotFather한테 받은 토큰)
    - Name: `TELEGRAM_CHAT_ID` / Value: (아까 확인한 chat_id 숫자)
 
-## 4) 정상 등록됐는지 확인
+## 4) 정상 등록됐는지 확인 + 최초 캐시 생성 (★ 중요, 처음 한 번은 꼭)
 
 1. 저장소 페이지에서 **Actions** 탭 클릭
-2. 왼쪽에 "EOD RSI Report", "Intraday RSI Monitor" 두 워크플로우가 보이면 정상
-3. 아무거나 클릭 → 오른쪽 **Run workflow** 버튼 눌러서 수동 실행 테스트 가능
-   (실행 후 초록 체크 표시 뜨면 성공, 빨간 X면 클릭해서 로그 확인)
+2. 왼쪽에 아래 3개 워크플로우가 보이면 정상:
+   - **Refresh Universe Cache**
+   - **EOD Signal Report**
+   - **Intraday 4H RSI Monitor**
+3. **먼저 "Refresh Universe Cache"부터 수동 실행**해야 함 (오른쪽 "Run workflow" 버튼)
+   - 이 단계가 S&P500+400+600 전체 종목의 시총/섹터 정보를 모아서
+     `universe_cache.json`을 만드는 과정이라, 다른 두 워크플로우가 이
+     캐시 없이는 스캔할 종목이 하나도 없어서 사실상 아무 일도 안 함
+   - 몇 분 정도 걸릴 수 있음 (수백~1500개 가까운 종목 조회)
+4. 캐시 생성이 초록 체크(성공)로 끝나면, 나머지 두 워크플로우도 각각
+   "Run workflow"로 수동 테스트 (실행 후 초록 체크면 성공, 빨간 X면 클릭해서 로그 확인)
 
 ## 5) 이제부터 자동으로 되는 것
 
-- **Intraday RSI Monitor**: 평일 미국 장중에 15분마다 자동 실행, 조건 통과 종목 있으면 Telegram 알림
-- **EOD RSI Report**: 평일 미국 장마감 후 자동 실행, 그날 확정 리포트 Telegram 전송
+- **Refresh Universe Cache**: 하루 1회, 장 열리기 전에 유니버스/시총/섹터 캐시 갱신
+- **EOD Signal Report**: 평일 미국 장마감 후, 일봉 기준 확정 신호(RSI 과매도/회복,
+  SMA120/200 터치, 일목구름대 터치) 종합 리포트 Telegram 전송
+- **Intraday 4H RSI Monitor**: 평일 장중 30분 간격, 4시간봉 RSI 과매도/회복 조기경보
 - 준상님 PC 상태(켜짐/꺼짐/잠자기)와 완전히 무관하게 작동
 
-## 6) 기존 Windows 작업 스케줄러는 삭제 권장
+## 6) 기존 Windows 작업 스케줄러
 
-GitHub Actions랑 Windows 작업 스케줄러가 동시에 돌면 **알림이 중복으로 두 번** 올 수 있으니, PowerShell에서 삭제:
+이미 삭제하셨다면 이 단계는 넘어가도 됨. 혹시 다시 등록해서 쓰고 계셨다면,
+GitHub Actions랑 중복으로 알림이 두 번 오는 걸 방지하기 위해 삭제 권장:
 
 ```powershell
 schtasks /delete /tn RSI30Screener /f
 schtasks /delete /tn RSI30IntradayMonitor /f
 ```
+
 
 ## 참고: 알아두면 좋은 점
 
