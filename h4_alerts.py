@@ -22,13 +22,15 @@ from state import StateStore
 STATE_FILENAME = "h4_state.json"
 
 
-def scan_h4_alerts():
-    """반환: (new_alerts: list[dict], state: StateStore)"""
+def scan_h4_alerts(state_filename: str = None):
+    """반환: (new_alerts: list[dict], state: StateStore)
+    state_filename을 넘기면 기본 상태파일 대신 그걸 사용함 (테스트용 임시파일 등)"""
+    state_filename = state_filename or STATE_FILENAME
     tickers = get_scan_universe()
     print(f"[4H] 스캔 대상 종목 수: {len(tickers)}")
 
     if not tickers:
-        return [], StateStore(STATE_FILENAME)
+        return [], StateStore(state_filename)
 
     hourly = download_hourly_data(tickers)
 
@@ -38,4 +40,4 @@ def scan_h4_alerts():
             return None
         return resample_to_4h(df.dropna(subset=["Close"]))
 
-    return scan(tickers, get_df, STATE_FILENAME, label="[4H] ", enable_cloud_breakout=True)
+    return scan(tickers, get_df, state_filename, label="[4H] ", enable_cloud_breakout=True)

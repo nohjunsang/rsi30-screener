@@ -12,17 +12,19 @@ from state import StateStore
 STATE_FILENAME = "daily_state.json"
 
 
-def scan_daily_alerts():
-    """반환: (new_alerts: list[dict], state: StateStore)"""
+def scan_daily_alerts(state_filename: str = None):
+    """반환: (new_alerts: list[dict], state: StateStore)
+    state_filename을 넘기면 기본 상태파일 대신 그걸 사용함 (테스트용 임시파일 등)"""
+    state_filename = state_filename or STATE_FILENAME
     tickers = get_scan_universe()
     print(f"스캔 대상 종목 수: {len(tickers)}")
 
     if not tickers:
-        return [], StateStore(STATE_FILENAME)
+        return [], StateStore(state_filename)
 
     data = download_daily_data(tickers)
 
     def get_df(ticker):
         return extract_ticker_df(data, ticker)
 
-    return scan(tickers, get_df, STATE_FILENAME, enable_cloud_breakout=True)
+    return scan(tickers, get_df, state_filename, enable_cloud_breakout=True)

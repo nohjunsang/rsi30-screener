@@ -11,6 +11,11 @@ on:
   schedule:
     - cron: '*/30 13-21 * * 1-5'   # 평일 13:00~21:45 UTC, 30분 간격
   workflow_dispatch:
+    inputs:
+      test:
+        description: '테스트 모드 (장시간+상태 무시, 지금 조건 충족 신호 강제 전송, 저장 안 함)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write   # 상태파일/히스토리 커밋을 위해 필요
@@ -32,9 +37,10 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python intraday_monitor.py
+        run: python intraday_monitor.py ${{ github.event.inputs.test == 'true' && '--test' || '' }}
 
       - name: 상태파일/히스토리 저장소에 반영
+        if: ${{ github.event.inputs.test != 'true' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
