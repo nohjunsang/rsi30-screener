@@ -119,6 +119,36 @@ SMA_TOUCH_TOLERANCE_PCT = 1.0            # 터치 판정 허용 오차(%)
 ICHIMOKU_TOUCH_TOLERANCE_PCT = 1.0
 ```
 
+## 백테스트 (지표 조건이 과거에 실제로 잘 맞았는지 검증)
+
+지금 `config.py`에 설정된 조건(RSI 30/70, SMA ±1%, 일목 9/26/52 등)을
+과거 데이터에 그대로 적용해서, "언제 신호가 났는지"와 "그 이후 N거래일
+뒤 수익률/승률"을 확인할 수 있음. GitHub Actions가 아니라 **로컬 PC에서
+직접 실행**해야 함 (계산량이 많아서 워크플로우로 돌리기엔 부담됨).
+
+```powershell
+pip install -r requirements.txt
+python refresh_cache.py                              # 캐시된 유니버스 쓰려면 먼저 (선택)
+python backtest.py                                     # 기본: 캐시된 유니버스 전체, 최근 5년
+python backtest.py --tickers AAPL,MSFT,TSLA,SOXL        # 특정 종목만 빠르게
+python backtest.py --years 3 --horizons 5,10,20          # 기간/평가시점 조절
+```
+
+**결과물:**
+- `backtest_events.csv` — 과거에 발생한 모든 신호 개별 이벤트 + 이후 기간별 수익률
+- `backtest_summary.csv` — 신호 종류별 집계 (발생횟수/평균수익률/중앙값/승률)
+- `backtest_summary.png` — 신호별 승률 막대그래프 (matplotlib 설치되어 있으면 자동 생성)
+
+**해석 시 주의할 점:**
+- `RSI 과매도 진입`, `일목구름대 하단 터치`처럼 "반등을 노리는" 신호는
+  수익률이 +일 때가 잘 맞은 케이스
+- `RSI 과매수 진입`, `일목구름대 상방 돌파`처럼 방향에 따라 해석이 다를 수
+  있는 신호는, 승률 숫자만 보지 말고 신호의 성격(추세추종형인지 역추세형인지)
+  감안해서 판단할 것
+- 표본 수가 적은 신호(발생 횟수 10회 미만 등)는 통계적으로 신뢰하기 어려움
+- 이 도구는 "지금 설정이 의도대로 동작하는지" 확인하고 조건을 조정하는
+  참고용이지, 미래 수익을 보장하는 게 아님
+
 ## 테스트 모드 (휴장일 등 실제 신호 없이도 강제로 알림 확인하고 싶을 때)
 
 GitHub Actions Actions 탭에서 "EOD Signal Report" 또는 "Intraday 4H Signal

@@ -96,6 +96,54 @@ def ichimoku_position(
     return position, float(cloud_top), float(cloud_bottom)
 
 
+def ichimoku_position_series(
+    high: pd.Series,
+    low: pd.Series,
+    close: pd.Series,
+    tenkan_period: int,
+    kijun_period: int,
+    senkou_b_period: int,
+    displacement: int,
+    tolerance_pct: float,
+):
+    """
+    ichimoku_position()의 벡터화 버전 - 마지막 시점 하나가 아니라 전체
+    기간에 대해 날짜별 position을 한 번에 계산함 (백테스트용, 훨씬 빠름).
+
+    반환: (position: pd.Series[object], cloud_top: pd.Series, cloud_bottom: pd.Series)
+    """
+    tenkan = (high.rolling(tenkan_period).max() + low.rolling(tenkan_period).min()) / 2
+    kijun = (high.rolling(kijun_period).max() + low.rolling(kijun_period).min()) / 2
+
+    senkou_a = ((tenkan + kijun) / 2).shift(displacement)
+    senkou_b = ((high.rolling(senkou_b_period).max() + low.rolling(senkou_b_period).min()) / 2).shift(
+        displacement
+    )
+
+    cloud_top = pd.concat([senkou_a, senkou_b], axis=1).max(axis=1)
+    cloud_bottom = pd.concat([senkou_a, senkou_b], axis=1).min(axis=1)
+
+    valid = cloud_top.notna() & cloud_bottom.notna()
+    top_dist = (close - cloud_top).abs() / cloud_top * 100
+    bottom_dist = (close - cloud_bottom).abs() / cloud_bottom * 100
+
+    position = pd.Series([None] * len(close), index=close.index, dtype=object)
+
+    is_top = valid & (top_dist <= tolerance_pct)
+    is_bottom = valid & ~is_top & (bottom_dist <= tolerance_pct)
+    is_inside = valid & ~is_top & ~is_bottom & (close >= cloud_bottom) & (close <= cloud_top)
+    is_above = valid & ~is_top & ~is_bottom & ~is_inside & (close > cloud_top)
+    is_below = valid & ~is_top & ~is_bottom & ~is_inside & ~is_above & (close < cloud_bottom)
+
+    position[is_top] = "top"
+    position[is_bottom] = "bottom"
+    position[is_inside] = "inside"
+    position[is_above] = "above"
+    position[is_below] = "below"
+
+    return position, cloud_top, cloud_bottom
+
+
 def resample_to_4h(df: pd.DataFrame) -> pd.DataFrame:
     """1시간봉 OHLC 데이터프레임을 4시간봉으로 리샘플링.
     (yfinance가 4h 인터벌을 직접 제공하지 않아서 60m 데이터를 묶어서 만듦)
