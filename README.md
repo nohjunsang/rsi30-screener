@@ -121,6 +121,16 @@ ICHIMOKU_TOUCH_TOLERANCE_PCT = 1.0
 
 ## 백테스트 (지표 조건이 과거에 실제로 잘 맞았는지 검증)
 
+**로컬에서 반복 실행할 거면 토큰을 매번 안 넣게 등록해두면 편함:**
+```powershell
+setx TELEGRAM_BOT_TOKEN "실제_봇토큰"
+setx TELEGRAM_CHAT_ID "실제_chat_id"
+```
+(등록 후 PowerShell 새로 열어야 적용됨. 그 이후론 새 창 열 때마다 자동으로 들어가 있음)
+
+등록해두면 `run_backtest.bat` 더블클릭(또는 `.\run_backtest.bat` 실행)만으로
+캐시된 전체 유니버스 + 최근 2년 + 텔레그램 전송까지 한 번에 됨.
+
 지금 `config.py`에 설정된 조건(RSI 30/70, SMA ±1%, 일목 9/26/52 등)을
 과거 데이터에 그대로 적용해서, "언제 신호가 났는지"와 "그 이후 N거래일
 뒤 수익률/승률"을 확인할 수 있음. GitHub Actions가 아니라 **로컬 PC에서
@@ -133,7 +143,12 @@ python backtest.py                                     # 기본: 캐시된 유�
 python backtest.py --tickers AAPL,MSFT,TSLA,SOXL        # 특정 종목만 빠르게
 python backtest.py --years 3 --horizons 5,10,20          # 기간/평가시점 조절
 python backtest.py --telegram                             # 결과 요약을 Telegram으로도 전송
+python backtest.py --years 2 --horizons 10,20 --telegram    # 2주/1개월 기준으로 텔레그램 요약
 ```
+
+`--horizons`에 넘긴 기간들은 텔레그램 메시지에 전부(예: "2주 +0.3%(승률55%) | 1개월 +0.6%(승률60%)")
+같이 표시됨. 5/10/20/40/60(거래일)은 각각 1주/2주/1개월/2개월/3개월로 자동 표기되고,
+그 외 숫자는 "N거래일"로 표시됨.
 
 **`--telegram` 옵션 (텔레그램으로 결과 바로 확인하고 싶을 때):**
 CSV 파일 열어보는 대신, 신호별 발생횟수/평균수익률/승률 요약과 함께

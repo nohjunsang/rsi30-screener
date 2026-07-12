@@ -172,26 +172,38 @@ def add_forward_returns(events: pd.DataFrame, sig: pd.DataFrame, horizons: list)
     return events
 
 
+HORIZON_LABELS = {5: "1주", 10: "2주", 15: "3주", 20: "1개월", 40: "2개월", 60: "3개월"}
+
+
+def _horizon_label(h: int) -> str:
+    friendly = HORIZON_LABELS.get(h)
+    return f"{h}거래일({friendly})" if friendly else f"{h}거래일"
+
+
 def build_telegram_summary(summary_df: pd.DataFrame, events_df: pd.DataFrame, tickers: list, years: int, horizons: list) -> str:
     """백테스트 요약을 Telegram 메시지 형태로 변환.
     실제 라이브 알림과 같은 신호명을 그대로 써서, "이 신호가 실제로 이렇게
-    잘 작동하는지" 텔레그램에서 바로 확인할 수 있게 함."""
-    h = horizons[0]
+    잘 작동하는지" 텔레그램에서 바로 확인할 수 있게 함.
+
+    horizons에 넘긴 기간들을 전부(예: [10, 20] = 2주/1개월) 한 줄에 같이 보여줌."""
     lines = [
         f"🧪 [백테스트] 최근 {years}년, {len(tickers)}개 종목",
-        f"(진입 후 {h}거래일 뒤 기준 요약, 전체는 backtest_summary.csv 참고)",
+        f"(기준: {', '.join(_horizon_label(h) for h in horizons)} 뒤 수익률, 전체는 backtest_summary.csv 참고)",
         "",
     ]
 
     for _, row in summary_df.iterrows():
         signal_type = row["signal_type"]
         count = int(row["count"])
-        avg_col = f"avg_return_{h}d(%)"
-        win_col = f"win_rate_{h}d(%)"
-        if avg_col in row and pd.notna(row[avg_col]):
-            lines.append(
-                f"· {signal_type}: {count}건 | 평균 {row[avg_col]:+.2f}% | 승률 {row[win_col]:.0f}%"
-            )
+        parts = []
+        for h in horizons:
+            avg_col = f"avg_return_{h}d(%)"
+            win_col = f"win_rate_{h}d(%)"
+            if avg_col in row and pd.notna(row[avg_col]):
+                friendly = HORIZON_LABELS.get(h, f"{h}일")
+                parts.append(f"{friendly} {row[avg_col]:+.2f}%(승률{row[win_col]:.0f}%)")
+        if parts:
+            lines.append(f"· {signal_type}: {count}건 | " + " | ".join(parts))
         else:
             lines.append(f"· {signal_type}: {count}건 (표본 부족으로 수익률 통계 없음)")
 
