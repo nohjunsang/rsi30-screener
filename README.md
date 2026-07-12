@@ -132,7 +132,14 @@ python refresh_cache.py                              # 캐시된 유니버스 �
 python backtest.py                                     # 기본: 캐시된 유니버스 전체, 최근 5년
 python backtest.py --tickers AAPL,MSFT,TSLA,SOXL        # 특정 종목만 빠르게
 python backtest.py --years 3 --horizons 5,10,20          # 기간/평가시점 조절
+python backtest.py --telegram                             # 결과 요약을 Telegram으로도 전송
 ```
+
+**`--telegram` 옵션 (텔레그램으로 결과 바로 확인하고 싶을 때):**
+CSV 파일 열어보는 대신, 신호별 발생횟수/평균수익률/승률 요약과 함께
+"신호별 가장 최근 발생 사례"(종목/날짜/종가)를 텔레그램으로 보내줌.
+이 날짜를 실제 증권 앱 차트에서 직접 찾아보면, "그 시점에 진짜 RSI가
+30 밑이었는지" 등을 눈으로 바로 대조 확인할 수 있음.
 
 **결과물:**
 - `backtest_events.csv` — 과거에 발생한 모든 신호 개별 이벤트 + 이후 기간별 수익률

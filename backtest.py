@@ -13,6 +13,7 @@ backtest.py
   python backtest.py                # 기본: 캐시된 유니버스, 최근 5년
   python backtest.py --tickers AAPL,MSFT,TSLA,SOXL   # 특정 종목만 빠르게
   python backtest.py --years 3 --horizons 5,10,20     # 기간/평가시점 조절
+  python backtest.py --telegram                        # 결과 요약을 Telegram으로도 전송
 
 결과물:
   backtest_events.csv   : 발생한 모든 신호 개별 이벤트 + 기간별 수익률
@@ -55,6 +56,11 @@ def parse_args():
         type=str,
         default="5,10,20",
         help="진입 후 며칠(거래일) 뒤 수익률을 볼지, 쉼표구분 (기본 5,10,20)",
+    )
+    p.add_argument(
+        "--telegram",
+        action="store_true",
+        help="백테스트 요약 결과를 Telegram으로도 전송 (config.py에 토큰/chat_id 설정되어 있어야 함)",
     )
     return p.parse_args()
 
@@ -164,6 +170,40 @@ def add_forward_returns(events: pd.DataFrame, sig: pd.DataFrame, horizons: list)
         events[col] = values
 
     return events
+
+
+def build_telegram_summary(summary_df: pd.DataFrame, events_df: pd.DataFrame, tickers: list, years: int, horizons: list) -> str:
+    """백테스트 요약을 Telegram 메시지 형태로 변환.
+    실제 라이브 알림과 같은 신호명을 그대로 써서, "이 신호가 실제로 이렇게
+    잘 작동하는지" 텔레그램에서 바로 확인할 수 있게 함."""
+    h = horizons[0]
+    lines = [
+        f"🧪 [백테스트] 최근 {years}년, {len(tickers)}개 종목",
+        f"(진입 후 {h}거래일 뒤 기준 요약, 전체는 backtest_summary.csv 참고)",
+        "",
+    ]
+
+    for _, row in summary_df.iterrows():
+        signal_type = row["signal_type"]
+        count = int(row["count"])
+        avg_col = f"avg_return_{h}d(%)"
+        win_col = f"win_rate_{h}d(%)"
+        if avg_col in row and pd.notna(row[avg_col]):
+            lines.append(
+                f"· {signal_type}: {count}건 | 평균 {row[avg_col]:+.2f}% | 승률 {row[win_col]:.0f}%"
+            )
+        else:
+            lines.append(f"· {signal_type}: {count}건 (표본 부족으로 수익률 통계 없음)")
+
+    # 실제 신호가 맞는지 눈으로 대조해볼 수 있게, 신호별 가장 최근 사례 1건씩 첨부
+    lines.append("")
+    lines.append("최근 발생 사례 (실제 차트와 대조용):")
+    latest_per_signal = events_df.sort_values("date").groupby("signal_type").tail(1)
+    for _, row in latest_per_signal.sort_values("date", ascending=False).iterrows():
+        date_str = pd.Timestamp(row["date"]).strftime("%Y-%m-%d")
+        lines.append(f"· {row['ticker']} {row['signal_type']} ({date_str}, 종가 ${row['entry_close']})")
+
+    return "\n".join(lines)
 
 
 def main():
@@ -279,6 +319,13 @@ def main():
                 )
     except ImportError:
         print("\n(matplotlib 없어서 차트는 생략함: pip install matplotlib 하면 다음번엔 생성됨)")
+
+    if args.telegram:
+        from notifier import send_telegram
+
+        msg = build_telegram_summary(summary_df, events_df, tickers, args.years, horizons)
+        send_telegram(msg)
+        print("\nTelegram으로 요약 전송함 (안 오면 config.py의 토큰/chat_id 확인, 또는 로컬에서 직접 값 채워서 테스트)")
 
 
 if __name__ == "__main__":
