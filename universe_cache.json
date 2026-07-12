@@ -1,0 +1,2144 @@
+{
+  "universe": {
+    "MMM": {
+      "sector": "Industrials",
+      "market_cap": 82157277181.09575
+    },
+    "AOS": {
+      "sector": "Industrials",
+      "market_cap": 8330361845.281189
+    },
+    "ABT": {
+      "sector": "Health Care",
+      "market_cap": 163608510086.77917
+    },
+    "ABBV": {
+      "sector": "Health Care",
+      "market_cap": 438305966268.7743
+    },
+    "ACN": {
+      "sector": "Information Technology",
+      "market_cap": 82752928785.57124
+    },
+    "ADBE": {
+      "sector": "Information Technology",
+      "market_cap": 88896899757.38525
+    },
+    "AMD": {
+      "sector": "Information Technology",
+      "market_cap": 909695814377.4615
+    },
+    "AES": {
+      "sector": "Utilities",
+      "market_cap": 10540470807.706345
+    },
+    "AFL": {
+      "sector": "Financials",
+      "market_cap": 62050351510.59839
+    },
+    "A": {
+      "sector": "Health Care",
+      "market_cap": 37927783863.54944
+    },
+    "APD": {
+      "sector": "Materials",
+      "market_cap": 66699545605.75299
+    },
+    "ABNB": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 88206698758.28674
+    },
+    "AKAM": {
+      "sector": "Information Technology",
+      "market_cap": 18346190416.63495
+    },
+    "ALB": {
+      "sector": "Materials",
+      "market_cap": 14865663118.457993
+    },
+    "ARE": {
+      "sector": "Real Estate",
+      "market_cap": 8344022888.539886
+    },
+    "ALGN": {
+      "sector": "Health Care",
+      "market_cap": 12851872671.588821
+    },
+    "ALLE": {
+      "sector": "Industrials",
+      "market_cap": 11741417108.038696
+    },
+    "LNT": {
+      "sector": "Utilities",
+      "market_cap": 19732366020.899483
+    },
+    "ALL": {
+      "sector": "Financials",
+      "market_cap": 64769680354.41727
+    },
+    "GOOGL": {
+      "sector": "Communication Services",
+      "market_cap": 4358514980841.9053
+    },
+    "GOOG": {
+      "sector": "Communication Services",
+      "market_cap": 4332279523093.151
+    },
+    "MO": {
+      "sector": "Consumer Staples",
+      "market_cap": 119881493289.48108
+    },
+    "AMZN": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 2639149189634.529
+    },
+    "AMCR": {
+      "sector": "Materials",
+      "market_cap": 19964087035.296707
+    },
+    "AEE": {
+      "sector": "Utilities",
+      "market_cap": 31256328186.703125
+    },
+    "AEP": {
+      "sector": "Utilities",
+      "market_cap": 73688140498.61572
+    },
+    "AXP": {
+      "sector": "Financials",
+      "market_cap": 239209995224.84177
+    },
+    "AIG": {
+      "sector": "Financials",
+      "market_cap": 41976425545.73341
+    },
+    "AMT": {
+      "sector": "Real Estate",
+      "market_cap": 78544910796.55862
+    },
+    "AWK": {
+      "sector": "Utilities",
+      "market_cap": 25521211766.249084
+    },
+    "AMP": {
+      "sector": "Financials",
+      "market_cap": 45556247165.74121
+    },
+    "AME": {
+      "sector": "Industrials",
+      "market_cap": 53628917428.69913
+    },
+    "AMGN": {
+      "sector": "Health Care",
+      "market_cap": 196124597594.74292
+    },
+    "APH": {
+      "sector": "Information Technology",
+      "market_cap": 195681087818.19794
+    },
+    "ADI": {
+      "sector": "Information Technology",
+      "market_cap": 192715984403.05664
+    },
+    "AON": {
+      "sector": "Financials",
+      "market_cap": 76234156697.4881
+    },
+    "APA": {
+      "sector": "Energy",
+      "market_cap": 11820043905.462513
+    },
+    "APO": {
+      "sector": "Financials",
+      "market_cap": 69378115403.14981
+    },
+    "AAPL": {
+      "sector": "Information Technology",
+      "market_cap": 4631217201493.408
+    },
+    "AMAT": {
+      "sector": "Information Technology",
+      "market_cap": 478360556575.0
+    },
+    "APP": {
+      "sector": "Information Technology",
+      "market_cap": 170314622047.3218
+    },
+    "APTV": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 12817855255.80854
+    },
+    "ACGL": {
+      "sector": "Financials",
+      "market_cap": 35309310910.278076
+    },
+    "ADM": {
+      "sector": "Consumer Staples",
+      "market_cap": 38754126101.047516
+    },
+    "ARES": {
+      "sector": "Financials",
+      "market_cap": 27470387470.338135
+    },
+    "ANET": {
+      "sector": "Information Technology",
+      "market_cap": 235414326582.37637
+    },
+    "AJG": {
+      "sector": "Financials",
+      "market_cap": 65029449839.05029
+    },
+    "AIZ": {
+      "sector": "Financials",
+      "market_cap": 13818341208.725464
+    },
+    "T": {
+      "sector": "Communication Services",
+      "market_cap": 146818393752.27197
+    },
+    "ATO": {
+      "sector": "Utilities",
+      "market_cap": 29411272127.00113
+    },
+    "ADSK": {
+      "sector": "Information Technology",
+      "market_cap": 44013226926.58583
+    },
+    "ADP": {
+      "sector": "Industrials",
+      "market_cap": 96703716769.50467
+    },
+    "AZO": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 50161937033.499756
+    },
+    "AVB": {
+      "sector": "Real Estate",
+      "market_cap": 27216737197.408966
+    },
+    "AVY": {
+      "sector": "Materials",
+      "market_cap": 12292770286.896286
+    },
+    "AXON": {
+      "sector": "Industrials",
+      "market_cap": 45604654182.68793
+    },
+    "BKR": {
+      "sector": "Energy",
+      "market_cap": 57103475561.719025
+    },
+    "BALL": {
+      "sector": "Materials",
+      "market_cap": 16424746897.956059
+    },
+    "BAC": {
+      "sector": "Financials",
+      "market_cap": 423453551150.92444
+    },
+    "BAX": {
+      "sector": "Health Care",
+      "market_cap": 11682529394.39804
+    },
+    "BDX": {
+      "sector": "Health Care",
+      "market_cap": 41865613151.08612
+    },
+    "BRK-B": {
+      "sector": "Financials",
+      "market_cap": 1064860269686.7228
+    },
+    "BBY": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 17451518676.010223
+    },
+    "TECH": {
+      "sector": "Health Care",
+      "market_cap": 11109299963.096375
+    },
+    "BIIB": {
+      "sector": "Health Care",
+      "market_cap": 29401930949.44455
+    },
+    "BLK": {
+      "sector": "Financials",
+      "market_cap": 160592270226.34973
+    },
+    "BX": {
+      "sector": "Financials",
+      "market_cap": 150448223996.1329
+    },
+    "XYZ": {
+      "sector": "Financials",
+      "market_cap": 46007493116.34827
+    },
+    "BNY": {
+      "sector": "Financials",
+      "market_cap": 104274703259.60243
+    },
+    "BA": {
+      "sector": "Industrials",
+      "market_cap": 175223841172.39688
+    },
+    "BKNG": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 138230563725.09174
+    },
+    "BSX": {
+      "sector": "Health Care",
+      "market_cap": 66544122044.2294
+    },
+    "BMY": {
+      "sector": "Health Care",
+      "market_cap": 117582466141.40413
+    },
+    "AVGO": {
+      "sector": "Information Technology",
+      "market_cap": 1902889357601.653
+    },
+    "BR": {
+      "sector": "Industrials",
+      "market_cap": 17056129199.774445
+    },
+    "BRO": {
+      "sector": "Financials",
+      "market_cap": 22933212163.324066
+    },
+    "BF-B": {
+      "sector": "Consumer Staples",
+      "market_cap": 12008477850.058565
+    },
+    "BLDR": {
+      "sector": "Industrials",
+      "market_cap": 8141207277.0373535
+    },
+    "BG": {
+      "sector": "Consumer Staples",
+      "market_cap": 22180150847.59037
+    },
+    "BXP": {
+      "sector": "Real Estate",
+      "market_cap": 10656279217.951363
+    },
+    "CHRW": {
+      "sector": "Industrials",
+      "market_cap": 22808433627.0
+    },
+    "CDNS": {
+      "sector": "Information Technology",
+      "market_cap": 105960236423.58398
+    },
+    "CPT": {
+      "sector": "Real Estate",
+      "market_cap": 11193273633.43985
+    },
+    "COF": {
+      "sector": "Financials",
+      "market_cap": 124140248443.03917
+    },
+    "CAH": {
+      "sector": "Health Care",
+      "market_cap": 55225741323.73955
+    },
+    "CCL": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 36747685758.27406
+    },
+    "CARR": {
+      "sector": "Industrials",
+      "market_cap": 57592443489.14365
+    },
+    "CVNA": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 47153265696.113205
+    },
+    "CASY": {
+      "sector": "Consumer Staples",
+      "market_cap": 30337739277.0282
+    },
+    "CAT": {
+      "sector": "Industrials",
+      "market_cap": 438672398159.6164
+    },
+    "CBOE": {
+      "sector": "Financials",
+      "market_cap": 28054540643.387207
+    },
+    "CBRE": {
+      "sector": "Real Estate",
+      "market_cap": 40856696910.42789
+    },
+    "CDW": {
+      "sector": "Information Technology",
+      "market_cap": 18446320711.91548
+    },
+    "COR": {
+      "sector": "Health Care",
+      "market_cap": 59037608521.40259
+    },
+    "CNC": {
+      "sector": "Health Care",
+      "market_cap": 33257227196.525574
+    },
+    "CNP": {
+      "sector": "Utilities",
+      "market_cap": 28482539758.110046
+    },
+    "CF": {
+      "sector": "Materials",
+      "market_cap": 17962334434.776398
+    },
+    "CRL": {
+      "sector": "Health Care",
+      "market_cap": 11242830035.695496
+    },
+    "SCHW": {
+      "sector": "Financials",
+      "market_cap": 179339658258.51834
+    },
+    "CHTR": {
+      "sector": "Communication Services",
+      "market_cap": 18456247706.92093
+    },
+    "CVX": {
+      "sector": "Energy",
+      "market_cap": 351317827769.0521
+    },
+    "CMG": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 45216373500.0
+    },
+    "CB": {
+      "sector": "Financials",
+      "market_cap": 134909375461.89752
+    },
+    "CHD": {
+      "sector": "Consumer Staples",
+      "market_cap": 22831885633.338898
+    },
+    "CIEN": {
+      "sector": "Information Technology",
+      "market_cap": 65216262396.634094
+    },
+    "CI": {
+      "sector": "Health Care",
+      "market_cap": 77629677017.43127
+    },
+    "CINF": {
+      "sector": "Financials",
+      "market_cap": 27732238916.93341
+    },
+    "CTAS": {
+      "sector": "Industrials",
+      "market_cap": 71880589058.61583
+    },
+    "CSCO": {
+      "sector": "Information Technology",
+      "market_cap": 478135429588.5068
+    },
+    "C": {
+      "sector": "Financials",
+      "market_cap": 240128168043.43286
+    },
+    "CFG": {
+      "sector": "Financials",
+      "market_cap": 29745514251.640076
+    },
+    "CLX": {
+      "sector": "Consumer Staples",
+      "market_cap": 11676165357.341858
+    },
+    "CME": {
+      "sector": "Financials",
+      "market_cap": 86815018926.50734
+    },
+    "CMS": {
+      "sector": "Utilities",
+      "market_cap": 23292538462.173904
+    },
+    "KO": {
+      "sector": "Consumer Staples",
+      "market_cap": 359214247887.72595
+    },
+    "CTSH": {
+      "sector": "Information Technology",
+      "market_cap": 20135609855.651855
+    },
+    "COHR": {
+      "sector": "Information Technology",
+      "market_cap": 63484959664.5
+    },
+    "COIN": {
+      "sector": "Financials",
+      "market_cap": 41908705977.26428
+    },
+    "CL": {
+      "sector": "Consumer Staples",
+      "market_cap": 73809460245.01122
+    },
+    "CMCSA": {
+      "sector": "Communication Services",
+      "market_cap": 84197425998.33237
+    },
+    "FIX": {
+      "sector": "Industrials",
+      "market_cap": 61786211406.453
+    },
+    "COP": {
+      "sector": "Energy",
+      "market_cap": 132842779638.66147
+    },
+    "ED": {
+      "sector": "Utilities",
+      "market_cap": 40951021831.797066
+    },
+    "STZ": {
+      "sector": "Consumer Staples",
+      "market_cap": 22894556445.100464
+    },
+    "CEG": {
+      "sector": "Utilities",
+      "market_cap": 89768306777.1222
+    },
+    "COO": {
+      "sector": "Health Care",
+      "market_cap": 13788664945.813751
+    },
+    "CPRT": {
+      "sector": "Industrials",
+      "market_cap": 25478332408.442863
+    },
+    "GLW": {
+      "sector": "Information Technology",
+      "market_cap": 164287153888.95837
+    },
+    "CPAY": {
+      "sector": "Financials",
+      "market_cap": 23114589992.609985
+    },
+    "CTVA": {
+      "sector": "Materials",
+      "market_cap": 57304497804.107666
+    },
+    "CSGP": {
+      "sector": "Real Estate",
+      "market_cap": 11593218499.609451
+    },
+    "COST": {
+      "sector": "Consumer Staples",
+      "market_cap": 406337454165.0
+    },
+    "CRH": {
+      "sector": "Materials",
+      "market_cap": 69967244005.60443
+    },
+    "CRWD": {
+      "sector": "Information Technology",
+      "market_cap": 190597764572.4463
+    },
+    "CCI": {
+      "sector": "Real Estate",
+      "market_cap": 34767766564.1149
+    },
+    "CSX": {
+      "sector": "Industrials",
+      "market_cap": 91810640591.43051
+    },
+    "CMI": {
+      "sector": "Industrials",
+      "market_cap": 93273711523.08685
+    },
+    "CVS": {
+      "sector": "Health Care",
+      "market_cap": 132887830970.96057
+    },
+    "DHR": {
+      "sector": "Health Care",
+      "market_cap": 140881745464.29456
+    },
+    "DRI": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 23393774362.75
+    },
+    "DDOG": {
+      "sector": "Information Technology",
+      "market_cap": 91673990116.712
+    },
+    "DVA": {
+      "sector": "Health Care",
+      "market_cap": 14942268195.877075
+    },
+    "DECK": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 14719992335.748268
+    },
+    "DE": {
+      "sector": "Industrials",
+      "market_cap": 158415473281.3385
+    },
+    "DELL": {
+      "sector": "Information Technology",
+      "market_cap": 281052572695.9081
+    },
+    "DAL": {
+      "sector": "Industrials",
+      "market_cap": 57414734971.60248
+    },
+    "DVN": {
+      "sector": "Energy",
+      "market_cap": 48708212680.62396
+    },
+    "DXCM": {
+      "sector": "Health Care",
+      "market_cap": 28925038002.64274
+    },
+    "FANG": {
+      "sector": "Energy",
+      "market_cap": 51590045365.12999
+    },
+    "DLR": {
+      "sector": "Real Estate",
+      "market_cap": 66747371875.712585
+    },
+    "DG": {
+      "sector": "Consumer Staples",
+      "market_cap": 26232163657.333786
+    },
+    "DLTR": {
+      "sector": "Consumer Staples",
+      "market_cap": 24004528490.84436
+    },
+    "D": {
+      "sector": "Utilities",
+      "market_cap": 61636236489.15546
+    },
+    "DPZ": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 9960599305.97992
+    },
+    "DASH": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 83579568445.33923
+    },
+    "DOV": {
+      "sector": "Industrials",
+      "market_cap": 28996642523.192413
+    },
+    "DOW": {
+      "sector": "Materials",
+      "market_cap": 20923124440.03387
+    },
+    "DHI": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 42984998257.78978
+    },
+    "DTE": {
+      "sector": "Utilities",
+      "market_cap": 31260415483.30284
+    },
+    "DUK": {
+      "sector": "Utilities",
+      "market_cap": 97823735926.21274
+    },
+    "DD": {
+      "sector": "Materials",
+      "market_cap": 18184411937.76837
+    },
+    "ETN": {
+      "sector": "Industrials",
+      "market_cap": 158146823526.00098
+    },
+    "EBAY": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 52036798645.01953
+    },
+    "ECHO": {
+      "sector": "Communication Services",
+      "market_cap": 27822094848.0
+    },
+    "ECL": {
+      "sector": "Materials",
+      "market_cap": 77201120486.51672
+    },
+    "EIX": {
+      "sector": "Utilities",
+      "market_cap": 28936503188.902084
+    },
+    "EW": {
+      "sector": "Health Care",
+      "market_cap": 53094517472.839355
+    },
+    "EA": {
+      "sector": "Communication Services",
+      "market_cap": 51757614730.71936
+    },
+    "ELV": {
+      "sector": "Health Care",
+      "market_cap": 90389499813.21716
+    },
+    "EME": {
+      "sector": "Industrials",
+      "market_cap": 34814671533.92505
+    },
+    "EMR": {
+      "sector": "Industrials",
+      "market_cap": 77786690734.86328
+    },
+    "ETR": {
+      "sector": "Utilities",
+      "market_cap": 53681766528.43521
+    },
+    "EOG": {
+      "sector": "Energy",
+      "market_cap": 71425489123.90656
+    },
+    "EQT": {
+      "sector": "Energy",
+      "market_cap": 30554599345.596313
+    },
+    "EFX": {
+      "sector": "Industrials",
+      "market_cap": 20078422619.19806
+    },
+    "EQIX": {
+      "sector": "Real Estate",
+      "market_cap": 103674791887.57031
+    },
+    "EQR": {
+      "sector": "Real Estate",
+      "market_cap": 25753303523.57373
+    },
+    "ERIE": {
+      "sector": "Financials",
+      "market_cap": 13167111533.41919
+    },
+    "ESS": {
+      "sector": "Real Estate",
+      "market_cap": 18864032699.004944
+    },
+    "EL": {
+      "sector": "Consumer Staples",
+      "market_cap": 29905968998.83255
+    },
+    "EG": {
+      "sector": "Financials",
+      "market_cap": 14664443737.80304
+    },
+    "EVRG": {
+      "sector": "Utilities",
+      "market_cap": 19757271161.709023
+    },
+    "ES": {
+      "sector": "Utilities",
+      "market_cap": 28138307355.729485
+    },
+    "EXC": {
+      "sector": "Utilities",
+      "market_cap": 47886140264.95414
+    },
+    "EXE": {
+      "sector": "Energy",
+      "market_cap": 20872717075.25
+    },
+    "EXPE": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 32505577502.28543
+    },
+    "EXPD": {
+      "sector": "Industrials",
+      "market_cap": 22498691257.460007
+    },
+    "EXR": {
+      "sector": "Real Estate",
+      "market_cap": 30413125764.937866
+    },
+    "XOM": {
+      "sector": "Energy",
+      "market_cap": 575650282097.5598
+    },
+    "FFIV": {
+      "sector": "Information Technology",
+      "market_cap": 24282280542.783813
+    },
+    "FDS": {
+      "sector": "Financials",
+      "market_cap": 8788601352.437485
+    },
+    "FICO": {
+      "sector": "Information Technology",
+      "market_cap": 29009504881.58423
+    },
+    "FAST": {
+      "sector": "Industrials",
+      "market_cap": 53372151912.828735
+    },
+    "FRT": {
+      "sector": "Real Estate",
+      "market_cap": 10447909696.091125
+    },
+    "FDX": {
+      "sector": "Industrials",
+      "market_cap": 75087160628.17603
+    },
+    "FDXF": {
+      "sector": "Industrials",
+      "market_cap": 22265937773.499786
+    },
+    "FIS": {
+      "sector": "Financials",
+      "market_cap": 21698586522.371502
+    },
+    "FITB": {
+      "sector": "Financials",
+      "market_cap": 51723199767.775665
+    },
+    "FSLR": {
+      "sector": "Information Technology",
+      "market_cap": 24481099889.042984
+    },
+    "FE": {
+      "sector": "Utilities",
+      "market_cap": 27718420846.860886
+    },
+    "FISV": {
+      "sector": "Financials",
+      "market_cap": 26902664000.540504
+    },
+    "FLEX": {
+      "sector": "Information Technology",
+      "market_cap": 49755702551.332184
+    },
+    "F": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 55785696820.0
+    },
+    "FTNT": {
+      "sector": "Information Technology",
+      "market_cap": 115399444041.85219
+    },
+    "FTV": {
+      "sector": "Industrials",
+      "market_cap": 18962355738.7905
+    },
+    "FOXA": {
+      "sector": "Communication Services",
+      "market_cap": 22725022837.737717
+    },
+    "FOX": {
+      "sector": "Communication Services",
+      "market_cap": 20470156785.0
+    },
+    "BEN": {
+      "sector": "Financials",
+      "market_cap": 17407844927.0
+    },
+    "FCX": {
+      "sector": "Materials",
+      "market_cap": 88438683552.86269
+    },
+    "GRMN": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 46885272358.37009
+    },
+    "IT": {
+      "sector": "Information Technology",
+      "market_cap": 8920670058.13771
+    },
+    "GE": {
+      "sector": "Industrials",
+      "market_cap": 375375919990.9691
+    },
+    "GEHC": {
+      "sector": "Health Care",
+      "market_cap": 29431497165.98044
+    },
+    "GEV": {
+      "sector": "Industrials",
+      "market_cap": 293326670508.94714
+    },
+    "GEN": {
+      "sector": "Information Technology",
+      "market_cap": 15609061065.215889
+    },
+    "GNRC": {
+      "sector": "Industrials",
+      "market_cap": 13771739376.862366
+    },
+    "GD": {
+      "sector": "Industrials",
+      "market_cap": 101427545275.99005
+    },
+    "GIS": {
+      "sector": "Consumer Staples",
+      "market_cap": 19330918754.619507
+    },
+    "GM": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 70194634054.91809
+    },
+    "GPC": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 17476519589.070282
+    },
+    "GILD": {
+      "sector": "Health Care",
+      "market_cap": 161193019014.80234
+    },
+    "GPN": {
+      "sector": "Financials",
+      "market_cap": 20800248522.71656
+    },
+    "GL": {
+      "sector": "Financials",
+      "market_cap": 13908506417.05481
+    },
+    "GDDY": {
+      "sector": "Information Technology",
+      "market_cap": 11773883352.790329
+    },
+    "GS": {
+      "sector": "Financials",
+      "market_cap": 311285946335.90515
+    },
+    "HAL": {
+      "sector": "Energy",
+      "market_cap": 28729327596.763687
+    },
+    "HIG": {
+      "sector": "Financials",
+      "market_cap": 38043874864.96765
+    },
+    "HAS": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 11172104910.781403
+    },
+    "HCA": {
+      "sector": "Health Care",
+      "market_cap": 90197843469.59839
+    },
+    "DOC": {
+      "sector": "Real Estate",
+      "market_cap": 14925936285.307255
+    },
+    "HSIC": {
+      "sector": "Health Care",
+      "market_cap": 9614574464.623177
+    },
+    "HSY": {
+      "sector": "Consumer Staples",
+      "market_cap": 35225780724.354614
+    },
+    "HPE": {
+      "sector": "Information Technology",
+      "market_cap": 64276840121.68453
+    },
+    "HLT": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 76371478339.57971
+    },
+    "HD": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 342310144758.7655
+    },
+    "HONA": {
+      "sector": "Industrials",
+      "market_cap": 69964449812.5
+    },
+    "HON": {
+      "sector": "Industrials",
+      "market_cap": 71735868908.65324
+    },
+    "HRL": {
+      "sector": "Consumer Staples",
+      "market_cap": 13609288684.155804
+    },
+    "HST": {
+      "sector": "Real Estate",
+      "market_cap": 15875501942.58857
+    },
+    "HWM": {
+      "sector": "Industrials",
+      "market_cap": 108369114212.61227
+    },
+    "HPQ": {
+      "sector": "Information Technology",
+      "market_cap": 22149738923.847103
+    },
+    "HUBB": {
+      "sector": "Industrials",
+      "market_cap": 25942142129.388245
+    },
+    "HUM": {
+      "sector": "Health Care",
+      "market_cap": 47090521676.55945
+    },
+    "HBAN": {
+      "sector": "Financials",
+      "market_cap": 36224825290.92569
+    },
+    "HII": {
+      "sector": "Industrials",
+      "market_cap": 11273098512.308136
+    },
+    "IBM": {
+      "sector": "Information Technology",
+      "market_cap": 270273408822.1582
+    },
+    "IEX": {
+      "sector": "Industrials",
+      "market_cap": 16443184223.371216
+    },
+    "IDXX": {
+      "sector": "Health Care",
+      "market_cap": 44456091197.046326
+    },
+    "ITW": {
+      "sector": "Industrials",
+      "market_cap": 77336636297.60742
+    },
+    "INCY": {
+      "sector": "Health Care",
+      "market_cap": 23316575127.143974
+    },
+    "IR": {
+      "sector": "Industrials",
+      "market_cap": 30856908763.76738
+    },
+    "PODD": {
+      "sector": "Health Care",
+      "market_cap": 11171006538.168396
+    },
+    "INTC": {
+      "sector": "Information Technology",
+      "market_cap": 552055821594.2383
+    },
+    "IBKR": {
+      "sector": "Financials",
+      "market_cap": 41915659813.34607
+    },
+    "ICE": {
+      "sector": "Financials",
+      "market_cap": 76491216967.24709
+    },
+    "IFF": {
+      "sector": "Materials",
+      "market_cap": 19793677950.040253
+    },
+    "IP": {
+      "sector": "Materials",
+      "market_cap": 20084578985.415756
+    },
+    "INTU": {
+      "sector": "Information Technology",
+      "market_cap": 75211731182.6477
+    },
+    "ISRG": {
+      "sector": "Health Care",
+      "market_cap": 144066360436.4323
+    },
+    "IVZ": {
+      "sector": "Financials",
+      "market_cap": 12846736105.494907
+    },
+    "INVH": {
+      "sector": "Real Estate",
+      "market_cap": 17583642124.209023
+    },
+    "IQV": {
+      "sector": "Health Care",
+      "market_cap": 34690166018.67676
+    },
+    "IRM": {
+      "sector": "Real Estate",
+      "market_cap": 36152224623.89129
+    },
+    "JBHT": {
+      "sector": "Industrials",
+      "market_cap": 26400004066.100677
+    },
+    "JBL": {
+      "sector": "Information Technology",
+      "market_cap": 34610128521.20749
+    },
+    "JKHY": {
+      "sector": "Financials",
+      "market_cap": 10680353769.991455
+    },
+    "J": {
+      "sector": "Industrials",
+      "market_cap": 14858117220.782547
+    },
+    "JNJ": {
+      "sector": "Health Care",
+      "market_cap": 618606643654.0555
+    },
+    "JCI": {
+      "sector": "Industrials",
+      "market_cap": 87130607774.88995
+    },
+    "JPM": {
+      "sector": "Financials",
+      "market_cap": 901575210085.3479
+    },
+    "KVUE": {
+      "sector": "Consumer Staples",
+      "market_cap": 37401767973.72978
+    },
+    "KDP": {
+      "sector": "Consumer Staples",
+      "market_cap": 43088918550.37245
+    },
+    "KEY": {
+      "sector": "Financials",
+      "market_cap": 25149288581.707077
+    },
+    "KEYS": {
+      "sector": "Information Technology",
+      "market_cap": 55036851178.2749
+    },
+    "KMB": {
+      "sector": "Consumer Staples",
+      "market_cap": 37311802875.54932
+    },
+    "KIM": {
+      "sector": "Real Estate",
+      "market_cap": 16778817458.989563
+    },
+    "KMI": {
+      "sector": "Energy",
+      "market_cap": 71461400938.46971
+    },
+    "KKR": {
+      "sector": "Financials",
+      "market_cap": 87039805092.61261
+    },
+    "KLAC": {
+      "sector": "Information Technology",
+      "market_cap": 302428842200.20984
+    },
+    "KHC": {
+      "sector": "Consumer Staples",
+      "market_cap": 29466574756.63827
+    },
+    "KR": {
+      "sector": "Consumer Staples",
+      "market_cap": 37089667013.17534
+    },
+    "LHX": {
+      "sector": "Industrials",
+      "market_cap": 54168980855.57254
+    },
+    "LH": {
+      "sector": "Health Care",
+      "market_cap": 22698419799.804688
+    },
+    "LRCX": {
+      "sector": "Information Technology",
+      "market_cap": 438101311078.0945
+    },
+    "LVS": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 30938535794.256115
+    },
+    "LDOS": {
+      "sector": "Industrials",
+      "market_cap": 13461560149.066544
+    },
+    "LEN": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 20300232807.671005
+    },
+    "LII": {
+      "sector": "Industrials",
+      "market_cap": 19210627354.570312
+    },
+    "LLY": {
+      "sector": "Health Care",
+      "market_cap": 1059905961155.6252
+    },
+    "LIN": {
+      "sector": "Materials",
+      "market_cap": 244946971205.9015
+    },
+    "LYV": {
+      "sector": "Communication Services",
+      "market_cap": 41839432569.807175
+    },
+    "LMT": {
+      "sector": "Industrials",
+      "market_cap": 120635484222.9668
+    },
+    "L": {
+      "sector": "Financials",
+      "market_cap": 23661362266.700264
+    },
+    "LOW": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 118662433824.65735
+    },
+    "LULU": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 13542440503.25734
+    },
+    "LITE": {
+      "sector": "Information Technology",
+      "market_cap": 62396378759.765625
+    },
+    "LYB": {
+      "sector": "Materials",
+      "market_cap": 18188921466.019524
+    },
+    "MTB": {
+      "sector": "Financials",
+      "market_cap": 35489495304.10217
+    },
+    "MPC": {
+      "sector": "Energy",
+      "market_cap": 82834097963.9563
+    },
+    "MAR": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 99175924133.90369
+    },
+    "MRSH": {
+      "sector": "Financials",
+      "market_cap": 85908776297.0539
+    },
+    "MLM": {
+      "sector": "Materials",
+      "market_cap": 34689715588.84277
+    },
+    "MRVL": {
+      "sector": "Information Technology",
+      "market_cap": 211649948196.35944
+    },
+    "MAS": {
+      "sector": "Industrials",
+      "market_cap": 15848774750.768585
+    },
+    "MA": {
+      "sector": "Financials",
+      "market_cap": 465418951153.9514
+    },
+    "MKC": {
+      "sector": "Consumer Staples",
+      "market_cap": 14101264107.517456
+    },
+    "MCD": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 195104913217.9836
+    },
+    "MCK": {
+      "sector": "Health Care",
+      "market_cap": 94359981932.70905
+    },
+    "MDT": {
+      "sector": "Health Care",
+      "market_cap": 107357393601.04912
+    },
+    "MRK": {
+      "sector": "Health Care",
+      "market_cap": 305122110490.2918
+    },
+    "META": {
+      "sector": "Communication Services",
+      "market_cap": 1698738315045.7427
+    },
+    "MET": {
+      "sector": "Financials",
+      "market_cap": 58970981777.15661
+    },
+    "MTD": {
+      "sector": "Health Care",
+      "market_cap": 26192487076.19934
+    },
+    "MGM": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 11994306170.078602
+    },
+    "MCHP": {
+      "sector": "Information Technology",
+      "market_cap": 48105109509.74396
+    },
+    "MU": {
+      "sector": "Information Technology",
+      "market_cap": 1106014698987.7625
+    },
+    "MSFT": {
+      "sector": "Information Technology",
+      "market_cap": 2860690249849.9673
+    },
+    "MAA": {
+      "sector": "Real Estate",
+      "market_cap": 15741044470.5
+    },
+    "MRNA": {
+      "sector": "Health Care",
+      "market_cap": 27088596569.944878
+    },
+    "TAP": {
+      "sector": "Consumer Staples",
+      "market_cap": 7346386427.783203
+    },
+    "MDLZ": {
+      "sector": "Consumer Staples",
+      "market_cap": 75517118084.21292
+    },
+    "MPWR": {
+      "sector": "Information Technology",
+      "market_cap": 66459124161.802
+    },
+    "MNST": {
+      "sector": "Consumer Staples",
+      "market_cap": 95248209235.97122
+    },
+    "MCO": {
+      "sector": "Financials",
+      "market_cap": 85116334495.41193
+    },
+    "MS": {
+      "sector": "Financials",
+      "market_cap": 350598867197.3635
+    },
+    "MOS": {
+      "sector": "Materials",
+      "market_cap": 6836881385.189323
+    },
+    "MSI": {
+      "sector": "Information Technology",
+      "market_cap": 70196212526.6853
+    },
+    "MSCI": {
+      "sector": "Financials",
+      "market_cap": 43979103756.33838
+    },
+    "NDAQ": {
+      "sector": "Financials",
+      "market_cap": 49812834523.37613
+    },
+    "NTAP": {
+      "sector": "Information Technology",
+      "market_cap": 33084997115.84973
+    },
+    "NFLX": {
+      "sector": "Communication Services",
+      "market_cap": 308946299564.6636
+    },
+    "NEM": {
+      "sector": "Materials",
+      "market_cap": 101727103858.93375
+    },
+    "NWSA": {
+      "sector": "Communication Services",
+      "market_cap": 14849744764.030704
+    },
+    "NWS": {
+      "sector": "Communication Services",
+      "market_cap": 16781242089.874802
+    },
+    "NEE": {
+      "sector": "Utilities",
+      "market_cap": 183449845380.25128
+    },
+    "NKE": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 65706956072.451996
+    },
+    "NI": {
+      "sector": "Utilities",
+      "market_cap": 22485701322.06623
+    },
+    "NDSN": {
+      "sector": "Industrials",
+      "market_cap": 15968764236.875366
+    },
+    "NSC": {
+      "sector": "Industrials",
+      "market_cap": 73547797781.6326
+    },
+    "NTRS": {
+      "sector": "Financials",
+      "market_cap": 33965424770.619415
+    },
+    "NOC": {
+      "sector": "Industrials",
+      "market_cap": 76645525347.40283
+    },
+    "NCLH": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 9003150125.618591
+    },
+    "NRG": {
+      "sector": "Utilities",
+      "market_cap": 29626719731.072235
+    },
+    "NUE": {
+      "sector": "Materials",
+      "market_cap": 51781458689.48364
+    },
+    "NVDA": {
+      "sector": "Information Technology",
+      "market_cap": 5109662322616.577
+    },
+    "NVR": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 17489765960.92383
+    },
+    "NXPI": {
+      "sector": "Information Technology",
+      "market_cap": 73787200014.07788
+    },
+    "ORLY": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 71501536004.50491
+    },
+    "OXY": {
+      "sector": "Energy",
+      "market_cap": 52606228728.813156
+    },
+    "ODFL": {
+      "sector": "Industrials",
+      "market_cap": 47339821274.76013
+    },
+    "OMC": {
+      "sector": "Communication Services",
+      "market_cap": 23350557725.25699
+    },
+    "ON": {
+      "sector": "Information Technology",
+      "market_cap": 37346250011.60994
+    },
+    "OKE": {
+      "sector": "Energy",
+      "market_cap": 56652552898.21539
+    },
+    "ORCL": {
+      "sector": "Information Technology",
+      "market_cap": 405109439681.9
+    },
+    "OTIS": {
+      "sector": "Industrials",
+      "market_cap": 28045806589.62976
+    },
+    "PCAR": {
+      "sector": "Industrials",
+      "market_cap": 65559475385.92019
+    },
+    "PKG": {
+      "sector": "Materials",
+      "market_cap": 20383097854.86049
+    },
+    "PLTR": {
+      "sector": "Information Technology",
+      "market_cap": 303955187758.63464
+    },
+    "PANW": {
+      "sector": "Information Technology",
+      "market_cap": 265616652984.61914
+    },
+    "PSKY": {
+      "sector": "Communication Services",
+      "market_cap": 10531418305.007744
+    },
+    "PH": {
+      "sector": "Industrials",
+      "market_cap": 121203065616.65479
+    },
+    "PAYX": {
+      "sector": "Industrials",
+      "market_cap": 38241224325.56152
+    },
+    "PYPL": {
+      "sector": "Financials",
+      "market_cap": 40859126166.56277
+    },
+    "PNR": {
+      "sector": "Industrials",
+      "market_cap": 12312726563.334778
+    },
+    "PEP": {
+      "sector": "Consumer Staples",
+      "market_cap": 187508808902.54956
+    },
+    "PFE": {
+      "sector": "Health Care",
+      "market_cap": 137755565999.56308
+    },
+    "PCG": {
+      "sector": "Utilities",
+      "market_cap": 37812198747.77641
+    },
+    "PM": {
+      "sector": "Consumer Staples",
+      "market_cap": 283065450000.3694
+    },
+    "PSX": {
+      "sector": "Energy",
+      "market_cap": 75520120611.91132
+    },
+    "PNW": {
+      "sector": "Utilities",
+      "market_cap": 13102756720.770493
+    },
+    "PNC": {
+      "sector": "Financials",
+      "market_cap": 101158147917.6936
+    },
+    "PPG": {
+      "sector": "Materials",
+      "market_cap": 26025804476.16577
+    },
+    "PPL": {
+      "sector": "Utilities",
+      "market_cap": 26919095033.963562
+    },
+    "PFG": {
+      "sector": "Financials",
+      "market_cap": 24243070581.45923
+    },
+    "PG": {
+      "sector": "Consumer Staples",
+      "market_cap": 342397178091.2157
+    },
+    "PGR": {
+      "sector": "Financials",
+      "market_cap": 134325184710.69336
+    },
+    "PLD": {
+      "sector": "Real Estate",
+      "market_cap": 131338449507.56836
+    },
+    "PRU": {
+      "sector": "Financials",
+      "market_cap": 40070898548.5469
+    },
+    "PEG": {
+      "sector": "Utilities",
+      "market_cap": 40139790451.85623
+    },
+    "PTC": {
+      "sector": "Information Technology",
+      "market_cap": 14408192122.59301
+    },
+    "PSA": {
+      "sector": "Real Estate",
+      "market_cap": 56283814098.69873
+    },
+    "PHM": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 23763172536.75
+    },
+    "PWR": {
+      "sector": "Industrials",
+      "market_cap": 98823611359.08221
+    },
+    "QCOM": {
+      "sector": "Information Technology",
+      "market_cap": 199374643859.86328
+    },
+    "DGX": {
+      "sector": "Health Care",
+      "market_cap": 22962867502.014954
+    },
+    "Q": {
+      "sector": "Information Technology",
+      "market_cap": 30102978605.45256
+    },
+    "RL": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 23503004672.141052
+    },
+    "RJF": {
+      "sector": "Financials",
+      "market_cap": 32763734724.502686
+    },
+    "RTX": {
+      "sector": "Industrials",
+      "market_cap": 263855674184.636
+    },
+    "O": {
+      "sector": "Real Estate",
+      "market_cap": 59036103354.88361
+    },
+    "REG": {
+      "sector": "Real Estate",
+      "market_cap": 14578166922.690353
+    },
+    "REGN": {
+      "sector": "Health Care",
+      "market_cap": 69667635592.27734
+    },
+    "RF": {
+      "sector": "Financials",
+      "market_cap": 26471833659.40615
+    },
+    "RSG": {
+      "sector": "Industrials",
+      "market_cap": 67439966931.48372
+    },
+    "RMD": {
+      "sector": "Health Care",
+      "market_cap": 29572644297.796875
+    },
+    "RVTY": {
+      "sector": "Health Care",
+      "market_cap": 12527047012.306023
+    },
+    "HOOD": {
+      "sector": "Financials",
+      "market_cap": 100829552331.53934
+    },
+    "ROK": {
+      "sector": "Industrials",
+      "market_cap": 52534658147.03015
+    },
+    "ROL": {
+      "sector": "Industrials",
+      "market_cap": 21410615727.722168
+    },
+    "ROP": {
+      "sector": "Information Technology",
+      "market_cap": 35916487452.14932
+    },
+    "ROST": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 71495687785.19385
+    },
+    "RCL": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 76534799562.31421
+    },
+    "SPGI": {
+      "sector": "Financials",
+      "market_cap": 127428000000.0
+    },
+    "CRM": {
+      "sector": "Information Technology",
+      "market_cap": 133759085998.53516
+    },
+    "SNDK": {
+      "sector": "Information Technology",
+      "market_cap": 283728135655.2107
+    },
+    "SBAC": {
+      "sector": "Real Estate",
+      "market_cap": 20155154991.038544
+    },
+    "SLB": {
+      "sector": "Energy",
+      "market_cap": 71403951379.95535
+    },
+    "STX": {
+      "sector": "Information Technology",
+      "market_cap": 205966357355.54663
+    },
+    "SRE": {
+      "sector": "Utilities",
+      "market_cap": 61579235179.24333
+    },
+    "NOW": {
+      "sector": "Information Technology",
+      "market_cap": 111082183735.80933
+    },
+    "SHW": {
+      "sector": "Materials",
+      "market_cap": 82373828649.23901
+    },
+    "SPG": {
+      "sector": "Real Estate",
+      "market_cap": 70944905433.75598
+    },
+    "SWKS": {
+      "sector": "Information Technology",
+      "market_cap": 9081512206.5909
+    },
+    "SJM": {
+      "sector": "Consumer Staples",
+      "market_cap": 11927884840.91301
+    },
+    "SW": {
+      "sector": "Materials",
+      "market_cap": 23197045929.859398
+    },
+    "SNA": {
+      "sector": "Industrials",
+      "market_cap": 20821262243.50952
+    },
+    "SOLV": {
+      "sector": "Health Care",
+      "market_cap": 13282499881.91272
+    },
+    "SO": {
+      "sector": "Utilities",
+      "market_cap": 107781258667.82999
+    },
+    "LUV": {
+      "sector": "Industrials",
+      "market_cap": 23671311069.7519
+    },
+    "SWK": {
+      "sector": "Industrials",
+      "market_cap": 13714290045.845093
+    },
+    "SBUX": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 120819599434.66187
+    },
+    "STT": {
+      "sector": "Financials",
+      "market_cap": 49878955025.11038
+    },
+    "STLD": {
+      "sector": "Materials",
+      "market_cap": 32941083171.95851
+    },
+    "STE": {
+      "sector": "Health Care",
+      "market_cap": 21050858880.0
+    },
+    "SYK": {
+      "sector": "Health Care",
+      "market_cap": 126424711624.39032
+    },
+    "SMCI": {
+      "sector": "Information Technology",
+      "market_cap": 18312975048.902534
+    },
+    "SYF": {
+      "sector": "Financials",
+      "market_cap": 24366661151.69641
+    },
+    "SNPS": {
+      "sector": "Information Technology",
+      "market_cap": 85304039287.5
+    },
+    "SYY": {
+      "sector": "Consumer Staples",
+      "market_cap": 40086048904.218506
+    },
+    "TMUS": {
+      "sector": "Communication Services",
+      "market_cap": 203032427616.89532
+    },
+    "TROW": {
+      "sector": "Financials",
+      "market_cap": 25401306795.18979
+    },
+    "TTWO": {
+      "sector": "Communication Services",
+      "market_cap": 45154131874.99031
+    },
+    "TPR": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 28433751737.99185
+    },
+    "TRGP": {
+      "sector": "Energy",
+      "market_cap": 58672912195.132416
+    },
+    "TGT": {
+      "sector": "Consumer Staples",
+      "market_cap": 61379386598.463745
+    },
+    "TEL": {
+      "sector": "Information Technology",
+      "market_cap": 58484242465.79906
+    },
+    "TDY": {
+      "sector": "Information Technology",
+      "market_cap": 29400469843.71753
+    },
+    "TER": {
+      "sector": "Information Technology",
+      "market_cap": 56292562410.65753
+    },
+    "TSLA": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 1531434002315.951
+    },
+    "TXN": {
+      "sector": "Information Technology",
+      "market_cap": 283457492908.18823
+    },
+    "TPL": {
+      "sector": "Energy",
+      "market_cap": 27439407849.963806
+    },
+    "TXT": {
+      "sector": "Industrials",
+      "market_cap": 15808247899.510468
+    },
+    "TMO": {
+      "sector": "Health Care",
+      "market_cap": 195863088591.85516
+    },
+    "TJX": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 167185966812.0915
+    },
+    "TKO": {
+      "sector": "Communication Services",
+      "market_cap": 13824038443.633636
+    },
+    "TTD": {
+      "sector": "Communication Services",
+      "market_cap": 9181216613.127794
+    },
+    "TSCO": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 15959001974.929321
+    },
+    "TT": {
+      "sector": "Industrials",
+      "market_cap": 106040315015.33112
+    },
+    "TDG": {
+      "sector": "Industrials",
+      "market_cap": 72229831041.48401
+    },
+    "TRV": {
+      "sector": "Financials",
+      "market_cap": 72069542206.89645
+    },
+    "TRMB": {
+      "sector": "Information Technology",
+      "market_cap": 12312950362.44001
+    },
+    "TFC": {
+      "sector": "Financials",
+      "market_cap": 64374579857.97691
+    },
+    "TYL": {
+      "sector": "Information Technology",
+      "market_cap": 12732179413.383636
+    },
+    "TSN": {
+      "sector": "Consumer Staples",
+      "market_cap": 20363643962.428192
+    },
+    "USB": {
+      "sector": "Financials",
+      "market_cap": 97218036906.789
+    },
+    "UBER": {
+      "sector": "Industrials",
+      "market_cap": 151733552292.66656
+    },
+    "UDR": {
+      "sector": "Real Estate",
+      "market_cap": 12908898744.955418
+    },
+    "ULTA": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 20170585245.971863
+    },
+    "UNP": {
+      "sector": "Industrials",
+      "market_cap": 170371938529.24698
+    },
+    "UAL": {
+      "sector": "Industrials",
+      "market_cap": 40895785728.0
+    },
+    "UPS": {
+      "sector": "Industrials",
+      "market_cap": 95600207236.73532
+    },
+    "URI": {
+      "sector": "Industrials",
+      "market_cap": 68632438580.263916
+    },
+    "UNH": {
+      "sector": "Health Care",
+      "market_cap": 385616272392.18115
+    },
+    "UHS": {
+      "sector": "Health Care",
+      "market_cap": 9417640568.451477
+    },
+    "VLO": {
+      "sector": "Energy",
+      "market_cap": 83346063304.51355
+    },
+    "VEEV": {
+      "sector": "Health Care",
+      "market_cap": 30883717691.73987
+    },
+    "VTR": {
+      "sector": "Real Estate",
+      "market_cap": 44076148867.5867
+    },
+    "VLTO": {
+      "sector": "Industrials",
+      "market_cap": 22767051208.69052
+    },
+    "VRSN": {
+      "sector": "Information Technology",
+      "market_cap": 24580008666.992188
+    },
+    "VRSK": {
+      "sector": "Industrials",
+      "market_cap": 24290138837.630615
+    },
+    "VZ": {
+      "sector": "Communication Services",
+      "market_cap": 175874536829.22192
+    },
+    "VRTX": {
+      "sector": "Health Care",
+      "market_cap": 123194615075.48279
+    },
+    "VRT": {
+      "sector": "Industrials",
+      "market_cap": 122476931443.16602
+    },
+    "VTRS": {
+      "sector": "Health Care",
+      "market_cap": 18947272213.6699
+    },
+    "VICI": {
+      "sector": "Real Estate",
+      "market_cap": 28639095915.887253
+    },
+    "V": {
+      "sector": "Financials",
+      "market_cap": 663651536207.4646
+    },
+    "VST": {
+      "sector": "Utilities",
+      "market_cap": 53564807072.27985
+    },
+    "VMC": {
+      "sector": "Materials",
+      "market_cap": 38310129796.25
+    },
+    "WRB": {
+      "sector": "Financials",
+      "market_cap": 26874658191.95874
+    },
+    "GWW": {
+      "sector": "Industrials",
+      "market_cap": 64953921056.505615
+    },
+    "WAB": {
+      "sector": "Industrials",
+      "market_cap": 44321418098.780334
+    },
+    "WMT": {
+      "sector": "Consumer Staples",
+      "market_cap": 906425227897.5651
+    },
+    "DIS": {
+      "sector": "Communication Services",
+      "market_cap": 166045227132.35107
+    },
+    "WBD": {
+      "sector": "Communication Services",
+      "market_cap": 66664765288.7387
+    },
+    "WM": {
+      "sector": "Industrials",
+      "market_cap": 93699670949.46716
+    },
+    "WAT": {
+      "sector": "Health Care",
+      "market_cap": 36960100678.51532
+    },
+    "WEC": {
+      "sector": "Utilities",
+      "market_cap": 37445423644.669235
+    },
+    "WFC": {
+      "sector": "Financials",
+      "market_cap": 266726127503.78864
+    },
+    "WELL": {
+      "sector": "Real Estate",
+      "market_cap": 163482724890.36407
+    },
+    "WST": {
+      "sector": "Health Care",
+      "market_cap": 24988760223.77182
+    },
+    "WDC": {
+      "sector": "Information Technology",
+      "market_cap": 200808371955.8902
+    },
+    "WY": {
+      "sector": "Real Estate",
+      "market_cap": 16908449731.161854
+    },
+    "WSM": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 26110310989.25
+    },
+    "WMB": {
+      "sector": "Energy",
+      "market_cap": 91749325734.77603
+    },
+    "WTW": {
+      "sector": "Financials",
+      "market_cap": 27356855671.935303
+    },
+    "WDAY": {
+      "sector": "Information Technology",
+      "market_cap": 34316964153.346756
+    },
+    "WYNN": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 10354801603.924843
+    },
+    "XEL": {
+      "sector": "Utilities",
+      "market_cap": 49979019449.504395
+    },
+    "XYL": {
+      "sector": "Industrials",
+      "market_cap": 28813205511.61319
+    },
+    "YUM": {
+      "sector": "Consumer Discretionary",
+      "market_cap": 45075089524.595856
+    },
+    "ZBRA": {
+      "sector": "Information Technology",
+      "market_cap": 12981051464.523926
+    },
+    "ZBH": {
+      "sector": "Health Care",
+      "market_cap": 17670862397.39923
+    },
+    "ZTS": {
+      "sector": "Health Care",
+      "market_cap": 31676875572.573853
+    },
+    "SOXL": {
+      "sector": "Watchlist",
+      "market_cap": null
+    },
+    "NAIL": {
+      "sector": "Watchlist",
+      "market_cap": null
+    },
+    "TSLQ": {
+      "sector": "Watchlist",
+      "market_cap": null
+    }
+  },
+  "always_include": [
+    "AAPL",
+    "ABBV",
+    "ABNB",
+    "ABT",
+    "AEP",
+    "AMAT",
+    "AMD",
+    "AMGN",
+    "AMT",
+    "AMZN",
+    "APD",
+    "AVGO",
+    "AXP",
+    "BA",
+    "BAC",
+    "BKNG",
+    "BRK-B",
+    "C",
+    "CAT",
+    "CBRE",
+    "CEG",
+    "CL",
+    "CMCSA",
+    "COP",
+    "COST",
+    "CRH",
+    "CSCO",
+    "CTVA",
+    "CVX",
+    "D",
+    "DE",
+    "DIS",
+    "DLR",
+    "DUK",
+    "ECL",
+    "EOG",
+    "EQIX",
+    "ETN",
+    "ETR",
+    "FCX",
+    "GE",
+    "GEV",
+    "GILD",
+    "GOOG",
+    "GOOGL",
+    "GS",
+    "HD",
+    "INTC",
+    "ISRG",
+    "JNJ",
+    "JPM",
+    "KMI",
+    "KO",
+    "LIN",
+    "LLY",
+    "LOW",
+    "LRCX",
+    "MA",
+    "MAR",
+    "MCD",
+    "MDLZ",
+    "META",
+    "MNST",
+    "MO",
+    "MPC",
+    "MRK",
+    "MS",
+    "MSFT",
+    "MU",
+    "NAIL",
+    "NEE",
+    "NEM",
+    "NFLX",
+    "NUE",
+    "NVDA",
+    "O",
+    "PEP",
+    "PG",
+    "PLD",
+    "PM",
+    "PSA",
+    "PSX",
+    "RTX",
+    "SBUX",
+    "SHW",
+    "SLB",
+    "SO",
+    "SOXL",
+    "SPG",
+    "SRE",
+    "T",
+    "TJX",
+    "TMO",
+    "TMUS",
+    "TSLA",
+    "TSLQ",
+    "UBER",
+    "UNH",
+    "UNP",
+    "V",
+    "VLO",
+    "VMC",
+    "VRT",
+    "VST",
+    "VTR",
+    "VZ",
+    "WBD",
+    "WELL",
+    "WFC",
+    "WMB",
+    "WMT",
+    "XEL",
+    "XOM"
+  ],
+  "updated_at": "2026-07-12 04:39:56 UTC"
+}
