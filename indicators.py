@@ -20,6 +20,92 @@ def wilder_rsi(close: pd.Series, period: int = 14) -> pd.Series:
     return rsi
 
 
+def detect_divergence(
+    close: pd.Series,
+    rsi: pd.Series,
+    lookback: int,
+    oversold_threshold: float,
+    overbought_threshold: float,
+    zone_buffer: float,
+):
+    """
+    가격과 RSI 사이의 다이버전스(이격) 감지. 미래 데이터를 안 쓰는 인과적
+    (causal, non-repainting) 방식이라 실시간 스캔에 그대로 쓸 수 있음.
+
+    방식: "오늘 이전 lookback개 봉" 중 가격의 최저/최고점을 기준점으로 잡고,
+    오늘 가격이 그 기준점 수준으로 다시 근접/갱신했는데 RSI는 그때보다
+    개선(약세/과열 압력이 줄어듦)되어 있으면 다이버전스로 판정.
+
+    반환: (kind, detail)
+      kind: "bullish" | "bearish" | None
+      detail: {"ref_date":.., "ref_price":.., "ref_rsi":.., "today_price":.., "today_rsi":..} | None
+    """
+    if len(close) < lookback + 2:
+        return None, None
+
+    window_close = close.iloc[-(lookback + 1) : -1]  # 오늘 제외
+    window_rsi = rsi.iloc[-(lookback + 1) : -1]
+
+    today_price = close.iloc[-1]
+    today_rsi = rsi.iloc[-1]
+
+    if pd.isna(today_rsi) or window_rsi.isna().all():
+        return None, None
+
+    # ---- 강세 다이버전스: 가격 신저가(근접) + RSI는 그때보다 높음 (과매도 구간 근처에서만 유의미) ----
+    ref_low_idx = window_close.idxmin()
+    ref_low_price = window_close.loc[ref_low_idx]
+    ref_low_rsi = window_rsi.loc[ref_low_idx]
+
+    if (
+        not pd.isna(ref_low_rsi)
+        and today_price <= ref_low_price * 1.002  # 0.2% 오차 허용
+        and today_rsi > ref_low_rsi
+        and today_rsi <= oversold_threshold + zone_buffer
+    ):
+        return "bullish", {
+            "ref_date": ref_low_idx,
+            "ref_price": round(float(ref_low_price), 2),
+            "ref_rsi": round(float(ref_low_rsi), 2),
+            "today_price": round(float(today_price), 2),
+            "today_rsi": round(float(today_rsi), 2),
+        }
+
+    # ---- 약세 다이버전스: 가격 신고가(근접) + RSI는 그때보다 낮음 (과매수 구간 근처에서만 유의미) ----
+    ref_high_idx = window_close.idxmax()
+    ref_high_price = window_close.loc[ref_high_idx]
+    ref_high_rsi = window_rsi.loc[ref_high_idx]
+
+    if (
+        not pd.isna(ref_high_rsi)
+        and today_price >= ref_high_price * 0.998
+        and today_rsi < ref_high_rsi
+        and today_rsi >= overbought_threshold - zone_buffer
+    ):
+        return "bearish", {
+            "ref_date": ref_high_idx,
+            "ref_price": round(float(ref_high_price), 2),
+            "ref_rsi": round(float(ref_high_rsi), 2),
+            "today_price": round(float(today_price), 2),
+            "today_rsi": round(float(today_rsi), 2),
+        }
+
+    return None, None
+
+
+def volume_spike_ratio(volume: pd.Series, lookback: int) -> float:
+    """오늘 거래량이 최근 lookback일 평균 거래량 대비 몇 배인지 반환"""
+    if volume is None or len(volume) < lookback + 1:
+        return None
+    avg_vol = volume.iloc[-(lookback + 1) : -1].mean()
+    if pd.isna(avg_vol) or avg_vol == 0:
+        return None
+    today_vol = volume.iloc[-1]
+    if pd.isna(today_vol):
+        return None
+    return float(today_vol / avg_vol)
+
+
 def sma_touch(close: pd.Series, period: int, tolerance_pct: float):
     """
     종가가 SMA(period)선 ±tolerance_pct% 안에 들어오는지 판정.

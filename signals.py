@@ -7,7 +7,7 @@ signals.py
 
 import pandas as pd
 
-from indicators import wilder_rsi, sma_touch, ichimoku_position
+from indicators import wilder_rsi, sma_touch, ichimoku_position, detect_divergence, volume_spike_ratio
 from config import (
     RSI_PERIOD,
     RSI_THRESHOLD,
@@ -19,13 +19,17 @@ from config import (
     ICHIMOKU_SENKOU_B,
     ICHIMOKU_DISPLACEMENT,
     ICHIMOKU_TOUCH_TOLERANCE_PCT,
+    DIVERGENCE_LOOKBACK,
+    RSI_DIVERGENCE_ZONE_BUFFER,
+    VOLUME_LOOKBACK,
+    VOLUME_SPIKE_MULTIPLIER,
 )
 
 
 def compute_signals(df: pd.DataFrame) -> dict:
     """
-    df: ['Open','High','Low','Close'] 컬럼을 가진 OHLC DataFrame (시간순 오름차순)
-        일봉이든 4시간봉이든 동일하게 사용 가능.
+    df: ['Open','High','Low','Close', ('Volume' 있으면 사용)] 컬럼을 가진
+        OHLC DataFrame (시간순 오름차순). 일봉이든 4시간봉이든 동일하게 사용 가능.
 
     반환 (모든 값은 "현재 시점의 원시 상태", 신규 여부 판단은 engine.py에서):
     {
@@ -35,11 +39,14 @@ def compute_signals(df: pd.DataFrame) -> dict:
         "sma_touches": [{"period":120,"touching":bool,"value":..,"distance_pct":..}, ...],
         "ichimoku": {"position": "top"|"bottom"|"inside"|"above"|"below",
                      "cloud_top":.., "cloud_bottom":..} | None,
+        "divergence": ("bullish"|"bearish"|None, detail_dict|None),
+        "volume_ratio": float | None,   # 평소 대비 거래량 배수 (Volume 없으면 None)
     }
     """
     close = df["Close"].dropna()
     high = df["High"].dropna()
     low = df["Low"].dropna()
+    volume = df["Volume"].dropna() if "Volume" in df.columns else None
 
     if len(close) < RSI_PERIOD + 1:
         return None
@@ -100,6 +107,20 @@ def compute_signals(df: pd.DataFrame) -> dict:
                 "cloud_bottom": round(cloud_bottom, 2),
             }
 
+    # ---- RSI 다이버전스 ----
+    divergence_kind, divergence_detail = detect_divergence(
+        close,
+        rsi_series,
+        DIVERGENCE_LOOKBACK,
+        RSI_THRESHOLD,
+        RSI_OVERBOUGHT_THRESHOLD,
+        RSI_DIVERGENCE_ZONE_BUFFER,
+    )
+
+    # ---- 거래량 급증 ----
+    vol_ratio = volume_spike_ratio(volume, VOLUME_LOOKBACK) if volume is not None else None
+    is_volume_spike = bool(vol_ratio is not None and vol_ratio >= VOLUME_SPIKE_MULTIPLIER)
+
     return {
         "close": round(latest_close, 2),
         "change_pct": change_pct,
@@ -107,4 +128,8 @@ def compute_signals(df: pd.DataFrame) -> dict:
         "rsi_zone": rsi_zone,
         "sma_touches": sma_touches,
         "ichimoku": ichimoku_result,
+        "divergence_kind": divergence_kind,
+        "divergence_detail": divergence_detail,
+        "volume_ratio": round(vol_ratio, 2) if vol_ratio is not None else None,
+        "is_volume_spike": is_volume_spike,
     }

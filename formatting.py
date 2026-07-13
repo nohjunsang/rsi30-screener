@@ -9,6 +9,8 @@ formatting.py
   2) 그 종목에 "지금 이 순간 동시에 활성 상태인" 신호가 2개 이상이면
      (오늘 새로 뜬 것 + 이미 지속중이던 것 다 포함해서) 어떤 신호끼리
      겹쳤는지 마지막 줄에 요약, 각각 (신규)/(기존) 표시
+  3) 반대 타임프레임(일봉<->4H)에서도 같은 종목이 활성 신호 상태면
+     "⭐ [OO에서도 동시 확인]"으로 고신뢰 신호임을 표시
 """
 
 # 이 신호들은 "구름대 안에서 발생"으로 묶일 수 있는 대상
@@ -65,6 +67,11 @@ def format_alerts(alerts: list, title: str, footer: str = "") -> str:
             if len(active) > 1:
                 parts = [f"{s['label']}({'신규' if s['is_new'] else '기존'})" for s in active]
                 lines.append(f"  ⚡ 동시 발생(겹침): {' + '.join(parts)}")
+
+            cross_signals = ticker_alerts[0].get("cross_timeframe_signals") or []
+            cross_label = ticker_alerts[0].get("cross_timeframe_label") or ""
+            if cross_signals:
+                lines.append(f"  ⭐ [{cross_label}에서도 동시 확인] {', '.join(cross_signals)} - 고신뢰 신호")
 
         lines.append("")
 

@@ -1,9 +1,10 @@
 """
 h4_alerts.py
-4시간봉 기준 종합 신호(RSI 과매도/회복, SMA120/200 터치, 일목균형표 구름대
-터치 + 상방/하방 돌파) 스캔 - 일봉과 동일한 조건들을 4시간봉에도 똑같이
-적용하되, 구름대 상방/하방 "돌파"(above/below 진입) 알림은 4시간봉에서만
-켜짐 (enable_cloud_breakout=True).
+4시간봉 기준 종합 신호(RSI 과매도/과매수 진입·회복, SMA120/200 터치, 일목균형표
+구름대 터치 + 상방/하방 돌파, RSI 다이버전스) 스캔 - 일봉과 동일한 조건들을
+4시간봉에도 똑같이 적용하되, 구름대 상방/하방 "돌파"(above/below 진입) 알림은
+4시간봉에서만 켜짐 (enable_cloud_breakout=True). 일봉 상태와의 컨플루언스도
+함께 확인함.
 
 주의: SMA120/200, 일목균형표(9/26/52)의 "기간 숫자"는 일봉/4시간봉 구분 없이
 그대로 재사용함. 즉 4시간봉에서 SMA120은 "120개의 4시간봉"(대략 20 거래일
@@ -40,4 +41,12 @@ def scan_h4_alerts(state_filename: str = None):
             return None
         return resample_to_4h(df.dropna(subset=["Close"]))
 
-    return scan(tickers, get_df, state_filename, label="[4H] ", enable_cloud_breakout=True)
+    return scan(
+        tickers,
+        get_df,
+        state_filename,
+        label="[4H] ",
+        enable_cloud_breakout=True,
+        cross_state_filename="daily_state.json",
+        cross_label="일봉",
+    )

@@ -3,13 +3,19 @@ engine.py
 일봉/4시간봉 공통 스캔 엔진.
 
 종목별 OHLC 데이터로 신호(RSI 과매도/과매수 진입·회복, SMA120/200 터치,
-일목구름대 상단/하단 터치, [옵션] 구름대 상방/하방 돌파)를 계산하고,
-상태가 실제로 바뀐(전이) 것만 걸러서 알림 목록을 만듦.
+일목구름대 상단/하단 터치, [옵션] 구름대 상방/하방 돌파, RSI 다이버전스)를
+계산하고, 상태가 실제로 바뀐(전이) 것만 걸러서 알림 목록을 만듦.
+
+추가 기능:
+  - 거래량 급증: 독자 신호는 아니고, 다른 신호가 뜰 때 "거래량도 평소보다
+    N배 터졌다"는 정보를 detail에 같이 붙여서 신호 신뢰도 판단에 참고하게 함.
+  - 타임프레임 건너 컨플루언스: cross_state_filename을 넘기면, 그 반대
+    타임프레임(일봉<->4H)에서도 지금 같은 종목이 활성 신호 상태인지 확인해서
+    겹치면 "고신뢰" 태그를 붙임.
 
 겹침(동시발생) 판정: 오늘 "새로" 뜬 신호끼리만 비교하지 않고, 그 종목이
 "지금 이 순간 동시에 활성 상태인" 모든 신호(신규 + 기존 지속중인 것 포함)를
-스냅샷으로 같이 붙여줌 - 그래야 "RSI는 3일 전부터 과매도였고 오늘 SMA만
-새로 터치"한 경우에도 겹침으로 표시할 수 있음.
+스냅샷으로 같이 붙여줌.
 """
 
 from signals import compute_signals
@@ -22,26 +28,56 @@ def _market_cap_b(ticker):
     return round(cap / 1e9, 1) if cap else None
 
 
+def _active_signal_labels(state: StateStore, ticker: str) -> list:
+    """해당 상태저장소 기준, 이 종목이 '지금' 활성 상태인 신호 라벨 목록
+    (컨플루언스/겹침 판정에 공용으로 씀)"""
+    labels = []
+    zone = state.get(ticker, "rsi_zone")
+    if zone == "oversold":
+        labels.append("RSI 과매도")
+    elif zone == "overbought":
+        labels.append("RSI 과매수")
+    for period in (120, 200):
+        if state.get(ticker, f"sma{period}") == "touching":
+            labels.append(f"SMA{period} 터치")
+    pos = state.get(ticker, "ichimoku_position")
+    if pos == "top":
+        labels.append("일목구름대 상단 터치")
+    elif pos == "bottom":
+        labels.append("일목구름대 하단 터치")
+    div = state.get(ticker, "divergence")
+    if div == "bullish":
+        labels.append("RSI 강세 다이버전스")
+    elif div == "bearish":
+        labels.append("RSI 약세 다이버전스")
+    return labels
+
+
 def scan(
     tickers: list,
     get_df,
     state_filename: str,
     label: str = "",
     enable_cloud_breakout: bool = False,
+    cross_state_filename: str = None,
+    cross_label: str = "",
 ) -> tuple:
     """
     tickers: 스캔 대상 티커 리스트
-    get_df: 함수, ticker -> OHLC DataFrame (또는 None/빈 df)
+    get_df: 함수, ticker -> OHLC(+Volume) DataFrame (또는 None/빈 df)
     state_filename: 이 스캔 전용 상태파일 이름 (daily_state.json / h4_state.json)
     label: 로그 출력용 접두어 (예: "" 또는 "[4H] ")
     enable_cloud_breakout: True면 구름대 상방/하방 "돌파"(above/below 진입)도
-        알림 대상에 포함. False면 터치(top/bottom)만 알림, above/below는
-        컨텍스트로만 씀 (일봉은 기본 False, 4시간봉은 True로 사용)
+        알림 대상에 포함
+    cross_state_filename: 넘기면, 그 상태파일(반대 타임프레임) 기준으로도
+        같은 종목이 활성 신호 상태인지 확인해서 컨플루언스 태그를 붙임
+    cross_label: 컨플루언스 태그에 표시할 반대 타임프레임 이름 (예: "4H", "일봉")
 
     반환: (new_alerts: list[dict], state: StateStore)
     state는 호출한 쪽에서 save() 해줘야 파일/git에 반영됨.
     """
     state = StateStore(state_filename)
+    cross_state = StateStore(cross_state_filename) if cross_state_filename else None
 
     if not tickers:
         print(f"{label}스캔 대상이 없습니다. refresh_cache.py를 먼저 실행했는지 확인하세요.")
@@ -60,6 +96,7 @@ def scan(
 
         cap_b = _market_cap_b(ticker)
         cloud_position = sig["ichimoku"]["position"] if sig["ichimoku"] else None
+        vol_tag = f" | 거래량 {sig['volume_ratio']}배" if sig.get("is_volume_spike") else ""
 
         ticker_alerts = []
 
@@ -68,11 +105,12 @@ def scan(
                 {
                     "ticker": ticker,
                     "signal_type": signal_type,
-                    "detail": detail,
+                    "detail": detail + vol_tag,
                     "close": sig["close"],
                     "change_pct": sig["change_pct"],
                     "market_cap_B": cap_b,
                     "cloud_position": cloud_position,
+                    "volume_spike": sig.get("is_volume_spike", False),
                 }
             )
 
@@ -110,8 +148,6 @@ def scan(
                 )
 
         # ---- 일목균형표: 터치(top/bottom) + [옵션] 돌파(above/below) ----
-        # position 5단계(top/bottom/inside/above/below)를 하나의 state 키로
-        # 추적해서, 상태가 바뀔 때마다 무엇으로 바뀌었는지에 따라 다르게 처리.
         ichimoku_new_kind = None
         if sig["ichimoku"]:
             position = sig["ichimoku"]["position"]
@@ -132,6 +168,23 @@ def scan(
                 elif position == "below" and enable_cloud_breakout:
                     ichimoku_new_kind = "일목구름대 하방 돌파"
                     _add(ichimoku_new_kind, f"구름 상단={cloud_top} 하단={cloud_bottom}")
+
+        # ---- RSI 다이버전스 (양방향 전이 감지: none <-> bullish/bearish) ----
+        divergence_kind = sig.get("divergence_kind")
+        divergence_status = divergence_kind if divergence_kind else "none"
+        div_changed = state.check_transition(ticker, "divergence", divergence_status)
+        if div_changed and divergence_kind:
+            d = sig["divergence_detail"]
+            if divergence_kind == "bullish":
+                _add(
+                    "RSI 강세 다이버전스",
+                    f"가격 {d['ref_price']}->{d['today_price']} (하락) / RSI {d['ref_rsi']}->{d['today_rsi']} (상승)",
+                )
+            else:
+                _add(
+                    "RSI 약세 다이버전스",
+                    f"가격 {d['ref_price']}->{d['today_price']} (상승) / RSI {d['ref_rsi']}->{d['today_rsi']} (하락)",
+                )
 
         if not ticker_alerts:
             continue
@@ -161,9 +214,19 @@ def scan(
             active_signals.append(
                 {"label": "일목구름대 하단 터치", "is_new": ichimoku_new_kind == "일목구름대 하단 터치"}
             )
+        div_now = state.get(ticker, "divergence")
+        if div_now == "bullish":
+            active_signals.append({"label": "RSI 강세 다이버전스", "is_new": div_changed})
+        elif div_now == "bearish":
+            active_signals.append({"label": "RSI 약세 다이버전스", "is_new": div_changed})
+
+        # ---- 타임프레임 건너 컨플루언스 ----
+        cross_signals = _active_signal_labels(cross_state, ticker) if cross_state else []
 
         for a in ticker_alerts:
             a["active_signals"] = active_signals
+            a["cross_timeframe_signals"] = cross_signals
+            a["cross_timeframe_label"] = cross_label
 
         new_alerts.extend(ticker_alerts)
 

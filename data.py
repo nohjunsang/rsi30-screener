@@ -89,14 +89,14 @@ def download_hourly_data(tickers: list[str]) -> pd.DataFrame:
 
 
 def extract_ticker_df(data: pd.DataFrame, ticker: str):
-    """다중 티커 yf.download 결과에서 개별 티커의 OHLC DataFrame 추출.
+    """다중 티커 yf.download 결과에서 개별 티커의 OHLC(+Volume) DataFrame 추출.
     실패 시 None 반환 (해당 티커 스킵 처리용)"""
     try:
         if isinstance(data.columns, pd.MultiIndex):
             df = data[ticker]
         else:
             df = data
-        cols = [c for c in ["Open", "High", "Low", "Close"] if c in df.columns]
+        cols = [c for c in ["Open", "High", "Low", "Close", "Volume"] if c in df.columns]
         if not cols:
             return None
         df = df[cols].dropna(how="all")

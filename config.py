@@ -41,6 +41,25 @@ ICHIMOKU_TOUCH_TOLERANCE_PCT = 1.0
 # (engine.py가 타임프레임 공용 로직이라 별도 4h 전용 임계값은 없음)
 H4_LOOKBACK_PERIOD = "60d"    # yfinance 60분봉은 최대 730일까지 가능, 60일이면 4h RSI(14) 계산에 충분
 
+# ---- 거래량 급증 확인 ----
+# 신호가 뜬 시점의 거래량이 평소보다 얼마나 많았는지 함께 표시.
+# (거래량 자체로 새 알림을 만들진 않고, 기존 신호에 "붙는 정보"로만 씀)
+VOLUME_LOOKBACK = 20                 # 평소 거래량 = 최근 N일 평균
+VOLUME_SPIKE_MULTIPLIER = 1.5        # 평균 대비 이 배수 이상이면 "거래량 급증"으로 표시
+
+# ---- RSI 다이버전스 ----
+# 최근 DIVERGENCE_LOOKBACK일(봉) 중 가격 저점/고점 대비, 오늘 RSI가
+# 그때보다 개선되어 있으면(가격은 신저가인데 RSI는 안 낮음/그 반대) 감지.
+# 극단 구간 근처에서만 의미가 있어서 RSI_DIVERGENCE_ZONE_BUFFER로 범위 제한함
+# (예: 과매도 임계값 30 + 10 = 40 이하일 때만 강세 다이버전스 인정).
+DIVERGENCE_LOOKBACK = 20
+RSI_DIVERGENCE_ZONE_BUFFER = 10
+
+# ---- 타임프레임 건너 컨플루언스 ----
+# 일봉 신호가 뜰 때 4시간봉도 같은 조건이 활성 상태인지(또는 그 반대)
+# 확인해서, 둘 다 겹치면 "고신뢰" 표시를 붙임.
+ENABLE_CROSS_TIMEFRAME_CONFLUENCE = True
+
 # ---- Telegram 알림 ----
 # GitHub Actions에서는 Repository Secrets로 주입되는 환경변수를 그대로 사용.
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")

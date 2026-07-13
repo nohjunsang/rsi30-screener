@@ -1,11 +1,12 @@
 """
 backtest.py
 지금 쓰고 있는 신호들(RSI 과매도/과매수, SMA120/200 터치, 일목균형표
-터치/돌파)이 과거에 실제로 얼마나 잘 맞았는지 검증하는 백테스트.
+터치/돌파, RSI 다이버전스)이 과거에 실제로 얼마나 잘 맞았는지 검증하는
+백테스트. 거래량 급증 여부도 각 이벤트에 같이 기록됨(참고용 부가정보).
 
 "신호가 발생한 시점" 각각에 대해, 그 이후 N거래일 뒤 가격이 얼마나
 움직였는지(수익률, 승률)를 집계함. config.py에 있는 것과 정확히 같은
-임계값(RSI 30/70, SMA ±1%, 일목 9/26/52)을 그대로 재사용함.
+임계값(RSI 30/70, SMA ±1%, 일목 9/26/52, 다이버전스 룩백 등)을 그대로 재사용함.
 
 로컬에서 실행 (샌드박스는 금융 API 접근이 막혀있어서 여기선 못 돌림):
   pip install -r requirements.txt
@@ -38,8 +39,12 @@ from config import (
     ICHIMOKU_SENKOU_B,
     ICHIMOKU_DISPLACEMENT,
     ICHIMOKU_TOUCH_TOLERANCE_PCT,
+    DIVERGENCE_LOOKBACK,
+    RSI_DIVERGENCE_ZONE_BUFFER,
+    VOLUME_LOOKBACK,
+    VOLUME_SPIKE_MULTIPLIER,
 )
-from indicators import wilder_rsi
+from indicators import wilder_rsi, detect_divergence, volume_spike_ratio
 
 
 def parse_args():
@@ -125,6 +130,35 @@ def compute_signal_series(df: pd.DataFrame) -> pd.DataFrame:
     position[cloud_top.isna() | cloud_bottom.isna()] = np.nan  # 데이터 부족한 초반 구간 제외
 
     out["ichimoku_position"] = position
+
+    # ---- RSI 다이버전스 (하루하루 인과적으로 계산 - 라이브와 동일한 detect_divergence 함수 재사용) ----
+    divergence_kind = pd.Series([None] * len(close), index=close.index, dtype=object)
+    for i in range(len(close)):
+        kind, _ = detect_divergence(
+            close.iloc[: i + 1],
+            rsi.iloc[: i + 1],
+            DIVERGENCE_LOOKBACK,
+            RSI_THRESHOLD,
+            RSI_OVERBOUGHT_THRESHOLD,
+            RSI_DIVERGENCE_ZONE_BUFFER,
+        )
+        divergence_kind.iloc[i] = kind
+    out["divergence_kind"] = divergence_kind
+
+    # ---- 거래량 급증 (Volume 컬럼 있을 때만) ----
+    if "Volume" in df.columns:
+        volume = df["Volume"]
+        vol_ratio = pd.Series(np.nan, index=close.index)
+        for i in range(len(close)):
+            vr = volume_spike_ratio(volume.iloc[: i + 1], VOLUME_LOOKBACK)
+            if vr is not None:
+                vol_ratio.iloc[i] = vr
+        out["volume_ratio"] = vol_ratio
+        out["is_volume_spike"] = vol_ratio >= VOLUME_SPIKE_MULTIPLIER
+    else:
+        out["volume_ratio"] = np.nan
+        out["is_volume_spike"] = False
+
     return out
 
 
@@ -136,8 +170,14 @@ def detect_entries(sig: pd.DataFrame) -> pd.DataFrame:
     def add_events(mask: pd.Series, signal_type: str):
         entries = mask.fillna(False) & ~mask.fillna(False).shift(1, fill_value=False)
         for date in sig.index[entries]:
+            has_vol_col = "is_volume_spike" in sig.columns
             events.append(
-                {"date": date, "signal_type": signal_type, "entry_close": sig.loc[date, "close"]}
+                {
+                    "date": date,
+                    "signal_type": signal_type,
+                    "entry_close": sig.loc[date, "close"],
+                    "volume_spike": bool(sig.loc[date, "is_volume_spike"]) if has_vol_col else False,
+                }
             )
 
     add_events(sig["rsi_zone"] == "oversold", "RSI 과매도 진입")
@@ -148,6 +188,8 @@ def detect_entries(sig: pd.DataFrame) -> pd.DataFrame:
     add_events(sig["ichimoku_position"] == "bottom", "일목구름대 하단 터치")
     add_events(sig["ichimoku_position"] == "above", "일목구름대 상방 돌파")
     add_events(sig["ichimoku_position"] == "below", "일목구름대 하방 돌파")
+    add_events(sig["divergence_kind"] == "bullish", "RSI 강세 다이버전스")
+    add_events(sig["divergence_kind"] == "bearish", "RSI 약세 다이버전스")
 
     return pd.DataFrame(events)
 
@@ -243,7 +285,8 @@ def main():
     for ticker in tickers:
         try:
             df = data[ticker] if isinstance(data.columns, pd.MultiIndex) else data
-            df = df[["Open", "High", "Low", "Close"]].dropna(how="all")
+            cols = [c for c in ["Open", "High", "Low", "Close", "Volume"] if c in df.columns]
+            df = df[cols].dropna(how="all")
         except Exception:
             skipped += 1
             continue
