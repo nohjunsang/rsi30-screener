@@ -252,3 +252,4 @@ python refresh_cache.py      # 최초 1회 필수
 python main.py                # 일봉 기준 확정 리포트
 python intraday_monitor.py     # 장중일 때만 4시간봉 조기경보
 ```
+
