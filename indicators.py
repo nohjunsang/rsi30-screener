@@ -234,11 +234,22 @@ def resample_to_4h(df: pd.DataFrame) -> pd.DataFrame:
     """1시간봉 OHLC 데이터프레임을 4시간봉으로 리샘플링.
     (yfinance가 4h 인터벌을 직접 제공하지 않아서 60m 데이터를 묶어서 만듦)
 
-    주의: 미국 정규장(09:30~16:00 ET, 6.5시간)은 4시간으로 딱 안 나눠떨어져서
-    실제 거래소 4시간봉 차트와 봉 경계가 완벽히 일치하진 않는 근사치임.
+    기준점(origin)을 자정이 아니라 데이터의 첫 시점(보통 장 시작 09:30 ET)에
+    맞춤. 자정 기준으로 하면 정규장(09:30~16:00, 6.5시간)이 "9:30~12:00"
+    (2.5시간짜리)과 "12:00~16:00"(마감 시간대를 포함한 온전한 4시간짜리)로
+    불균등하게 갈려서, 거래량이 원래 몰리는 마감 시간대 봉이 길이까지 길어져
+    거래량 급증이 구조적으로 과대평가되는 문제가 있었음. 장 시작 기준으로
+    맞추면 "9:30~13:30"(4시간) / "13:30~16:00"(2.5시간)으로 나뉘어서
+    매일 같은 패턴으로 일관되게 쪼개짐 (그래도 6.5시간이 4로 안 나눠떨어지는
+    근본적 한계는 여전히 있어 완벽한 균등 분할은 아님).
     """
     agg = {"Open": "first", "High": "max", "Low": "min", "Close": "last"}
     if "Volume" in df.columns:
         agg["Volume"] = "sum"
-    resampled = df.resample("4h", origin="start_day").agg(agg).dropna(how="all")
+    origin = df.index[0] if len(df) > 0 else "start_day"
+    resampled = df.resample("4h", origin=origin).agg(agg)
+    # 거래가 없던 구간(예: 야간)은 Close가 NaN으로 남음. Volume은 빈 구간도
+    # sum() 결과가 0(NaN 아님)이라 dropna(how="all")로는 안 걸러지므로,
+    # 실제 거래가 있었는지는 Close 기준으로 판단해서 제거함.
+    resampled = resampled.dropna(subset=["Close"])
     return resampled
