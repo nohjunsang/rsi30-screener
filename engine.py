@@ -153,21 +153,22 @@ def scan(
             position = sig["ichimoku"]["position"]
             cloud_top = sig["ichimoku"]["cloud_top"]
             cloud_bottom = sig["ichimoku"]["cloud_bottom"]
+            cloud_range = f"구름대 {cloud_bottom}~{cloud_top}"
             changed = state.check_transition(ticker, "ichimoku_position", position)
 
             if changed:
                 if position == "top":
                     ichimoku_new_kind = "일목구름대 상단 터치"
-                    _add(ichimoku_new_kind, f"구름 상단={cloud_top} 하단={cloud_bottom}")
+                    _add(ichimoku_new_kind, cloud_range)
                 elif position == "bottom":
                     ichimoku_new_kind = "일목구름대 하단 터치"
-                    _add(ichimoku_new_kind, f"구름 상단={cloud_top} 하단={cloud_bottom}")
+                    _add(ichimoku_new_kind, cloud_range)
                 elif position == "above" and enable_cloud_breakout:
                     ichimoku_new_kind = "일목구름대 상방 돌파"
-                    _add(ichimoku_new_kind, f"구름 상단={cloud_top} 하단={cloud_bottom}")
+                    _add(ichimoku_new_kind, cloud_range)
                 elif position == "below" and enable_cloud_breakout:
                     ichimoku_new_kind = "일목구름대 하방 돌파"
-                    _add(ichimoku_new_kind, f"구름 상단={cloud_top} 하단={cloud_bottom}")
+                    _add(ichimoku_new_kind, cloud_range)
 
         # ---- RSI 다이버전스 (양방향 전이 감지: none <-> bullish/bearish) ----
         divergence_kind = sig.get("divergence_kind")
@@ -178,12 +179,12 @@ def scan(
             if divergence_kind == "bullish":
                 _add(
                     "RSI 강세 다이버전스",
-                    f"가격 {d['ref_price']}->{d['today_price']} (하락) / RSI {d['ref_rsi']}->{d['today_rsi']} (상승)",
+                    f"가격 {d['ref_price']}→{d['today_price']} (하락) / RSI {d['ref_rsi']}→{d['today_rsi']} (상승)",
                 )
             else:
                 _add(
                     "RSI 약세 다이버전스",
-                    f"가격 {d['ref_price']}->{d['today_price']} (상승) / RSI {d['ref_rsi']}->{d['today_rsi']} (하락)",
+                    f"가격 {d['ref_price']}→{d['today_price']} (상승) / RSI {d['ref_rsi']}→{d['today_rsi']} (하락)",
                 )
 
         if not ticker_alerts:
