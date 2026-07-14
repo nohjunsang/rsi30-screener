@@ -1,0 +1,51 @@
+name: Premarket Digest
+
+# 미국 정규장 시작(09:30 ET) 20분 전 = 09:10 ET 부근에 실행.
+# EDT(서머타임) 기준 09:00~09:20 ET = 13:00~13:20 UTC
+# EST 기준 09:00~09:20 ET = 14:00~14:20 UTC
+# -> 두 경우 다 커버하도록 13:00~14:20 UTC 범위에서 10분 간격으로 깨움.
+# (실제로 "지금이 리마인더 시간대인지"는 premarket_digest.py 내부의
+#  zoneinfo 체크가 다시 한 번 정확하게 걸러주고, 하루 1번만 보내지도록
+#  premarket_sent.json으로 중복도 방지함)
+on:
+  schedule:
+    - cron: '*/10 13-14 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      test:
+        description: '테스트 모드 (시간대+중복전송 무시, 강제 전송)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
+
+      - name: 장전 리마인더 실행
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python premarket_digest.py ${{ github.event.inputs.test == 'true' && '--test' || '' }}
+
+      - name: 중복방지 마커 저장소에 반영
+        if: ${{ github.event.inputs.test != 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -f premarket_sent.json ]; then
+            git add premarket_sent.json
+            git diff --staged --quiet || git commit -m "chore: update premarket_sent.json [skip ci]"
+            git push
+          fi

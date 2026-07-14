@@ -1,0 +1,51 @@
+name: KR Market Open Digest
+
+# 한국 장 시작(09:00 KST) 20분 전 = 08:40 KST 부근에 실행.
+# 한국은 서머타임이 없어서 UTC로 고정 계산 가능: 08:40 KST = 23:40 UTC(전날).
+# KST 월~금(거래일)에 맞추려면, UTC 기준으로는 일~목(전날 밤)이 되어야 함
+# (cron day-of-week: 0=일,1=월,...,4=목).
+# 여유 있게 23:00~23:55 UTC 사이 5분 간격으로 깨우고, 실제로 08:30~08:50
+# KST인지는 kr_open_digest.py 내부에서 정확히 판단함. 하루 1번만 실행되도록
+# kr_open_sent.json으로 중복도 방지함.
+on:
+  schedule:
+    - cron: '*/5 23 * * 0-4'
+  workflow_dispatch:
+    inputs:
+      test:
+        description: '테스트 모드 (시간대+중복전송 무시, 강제 전송)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
+
+      - name: 한국장 전 리마인더 실행
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python kr_open_digest.py ${{ github.event.inputs.test == 'true' && '--test' || '' }}
+
+      - name: 중복방지 마커 저장소에 반영
+        if: ${{ github.event.inputs.test != 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -f kr_open_sent.json ]; then
+            git add kr_open_sent.json
+            git diff --staged --quiet || git commit -m "chore: update kr_open_sent.json [skip ci]"
+            git push
+          fi
