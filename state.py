@@ -1,51 +1,41 @@
 """
 state.py
-종목별로 "지금 어떤 신호 상태인지"를 파일에 저장해두고,
-상태가 바뀌는 순간(전이, transition)에만 알림을 보내도록 하는 범용 상태 저장소.
-
-예: RSI가 계속 30 이하에 머물러 있어도 매번 알림이 오지 않고,
-"정상 -> 과매도로 넘어가는 순간"과 "과매도 -> 정상(회복)으로 넘어가는 순간"에만
-알림이 나가도록 함.
+장중 모니터링에서 같은 종목을 하루에 여러 번 알림 보내지 않도록
+"오늘 이미 알림 보낸 티커" 목록을 파일로 저장/조회
 """
 
 import json
 from pathlib import Path
 
+STATE_FILE = Path(__file__).parent / "alerted_today.json"
 
-class StateStore:
-    def __init__(self, filename: str):
-        self.path = Path(__file__).parent / filename
-        self._data = self._load()
 
-    def _load(self) -> dict:
-        if not self.path.exists():
-            return {}
-        try:
-            return json.loads(self.path.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            return {}
+def load_alerted(today: str) -> set:
+    """오늘 날짜 기준으로 이미 알림 보낸 티커 목록을 불러옴.
+    날짜가 바뀌었으면 자동으로 초기화됨."""
+    if not STATE_FILE.exists():
+        return set()
 
-    def save(self):
-        self.path.write_text(
-            json.dumps(self._data, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+    try:
+        data = json.loads(STATE_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return set()
 
-    def get(self, ticker: str, key: str, default=None):
-        return self._data.get(ticker, {}).get(key, default)
+    if data.get("date") != today:
+        return set()  # 날짜가 바뀜 -> 초기화
 
-    def set(self, ticker: str, key: str, value):
-        self._data.setdefault(ticker, {})[key] = value
+    return set(data.get("tickers", []))
 
-    def check_transition(self, ticker: str, key: str, new_value: str) -> bool:
-        """
-        이전 상태와 다르면(=전이 발생) True를 반환하고 상태를 갱신함.
-        같으면 False (알림 안 보내도 됨).
-        """
-        old_value = self.get(ticker, key)
-        if old_value == new_value:
-            return False
-        self.set(ticker, key, new_value)
-        return True
 
-    def exists_on_disk(self) -> bool:
-        return self.path.exists()
+def save_alerted(today: str, tickers: set):
+    STATE_FILE.write_text(
+        json.dumps({"date": today, "tickers": sorted(tickers)}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def mark_alerted(today: str, new_tickers: list):
+    """새로 알림 보낸 티커들을 기존 목록에 추가해서 저장"""
+    alerted = load_alerted(today)
+    alerted.update(new_tickers)
+    save_alerted(today, alerted)
