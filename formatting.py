@@ -3,22 +3,24 @@ formatting.py
 알림 메시지 포맷팅 (일봉/4시간봉 공통). Telegram HTML 파스모드를 사용해서
 종목명은 굵게, 신호 종류마다 구분되는 이모지를 붙여 가독성을 높임.
 
-종목 수가 많을 때 가독성이 떨어지는 걸 막기 위해, 신호를 두 그룹으로 나눔:
-  - ⭐ 주목할 신호: RSI 관련(과매도/과매수/다이버전스), 여러 신호 겹침,
-    타임프레임 컨플루언스, 거래량 급증, 구름대 안 컨텍스트 등 - 이런 건
-    종목별로 자세히(현재가/등락율/상세수치까지) 보여줌
-  - 나머지(일반) 신호: 단순 SMA 터치 하나, 단순 일목 터치/돌파 하나처럼
-    부가 정보 없이 그 신호 하나만 뜬 경우 - 신호 종류별로 묶어서
-    종목명만 나열 (자세한 수치는 생략, 스크롤 부담을 크게 줄임)
+메시지는 4개 섹션으로 구성됨 (위에서부터 우선순위 순):
+  1) 🌟 고품질 자리: 추세(골든/데드크로스)와 신호 방향이 같고, 겹침/
+     컨플루언스/거래량 같은 확인이 많이 붙은 종목 - 점수로 자동 판정
+  2) ⚠️ 주의 필요: 추세를 거스르는 역방향 신호(예: 데드크로스 중 RSI
+     과매도 - "떨어지는 칼날" 위험) - 마찬가지로 점수로 자동 판정
+  3) ⭐ 주목할 신호: 위 둘로 분류 안 된 것 중, RSI/다이버전스/겹침/
+     컨플루언스/거래량급증 등 부가정보 있는 신호 - 자세히 표시
+  4) 나머지(일반) 신호: 단순 SMA/일목 터치 하나만 뜬 흔한 경우 -
+     신호 종류별로 종목명만 압축해서 나열
 
-같은 종목에서 여러 신호가 동시에 뜨면(⭐ 주목할 신호 섹션 안에서):
-  1) RSI/SMA 신호가 하필 "구름대 안(inside)"에서 발생했으면, 따로따로
-     나열하지 않고 "☁️ 구름대 안에서 OO 발생" 식으로 묶어서 표시
-  2) 그 종목에 "지금 이 순간 동시에 활성 상태인" 신호가 2개 이상이면
-     (오늘 새로 뜬 것 + 이미 지속중이던 것 다 포함해서) 어떤 신호끼리
-     겹쳤는지 마지막 줄에 요약, 각각 (신규)/(기존) 표시
-  3) 반대 타임프레임(일봉<->4H)에서도 같은 종목이 활성 신호 상태면
-     "⭐ [OO에서도 동시 확인]"으로 고신뢰 신호임을 표시
+품질 점수 계산 방식 (_compute_quality 참고):
+  - 신호 방향(상승기대/하락기대)이 있는 신호가 하나라도 새로 떴을 때만 계산
+  - 그 방향이 지금 추세(골든/데드크로스 상태)와 같은 방향이면 +2,
+    반대(역행) 방향이면 -2
+  - 같이 활성 상태인 신호가 많을수록(겹침) 최대 +3
+  - 타임프레임 컨플루언스(일봉+4H 동시) +2
+  - 거래량 급증 동반 +1
+  - 점수 >= GOOD_THRESHOLD 면 고품질, <= BAD_THRESHOLD 면 주의
 """
 
 import html
@@ -50,7 +52,6 @@ SIGNAL_EMOJI = {
 }
 
 # 이 신호들은 "구름대 안에서 발생"으로 묶일 수 있는 대상
-# (일목구름대 상단/하단 터치 자체는 이미 구름 얘기라 여기 포함 안 함)
 CLOUD_CONTEXT_TYPES = {
     "RSI 과매도 진입",
     "RSI 과매도 회복",
@@ -63,15 +64,13 @@ CLOUD_CONTEXT_TYPES = {
 }
 
 # 이 신호들은 단독으로 떠도 항상 "주목할 신호"로 자세히 보여줌
-# (SMA 터치, 일목 터치/돌파는 단독일 땐 흔해서 압축 대상, RSI/다이버전스는
-#  이 스크리너의 핵심 관심사라 단독이어도 항상 자세히 보여줌)
 ALWAYS_NOTABLE_TYPES = {
     "RSI 과매도 진입",
     "RSI 과매도 회복",
-    "RSI 과매도",  # premarket_digest.py 등 스냅샷 모드에서 쓰는 라벨
+    "RSI 과매도",
     "RSI 과매수 진입",
     "RSI 과매수 회복",
-    "RSI 과매수",  # 스냅샷 모드
+    "RSI 과매수",
     "RSI 강세 다이버전스",
     "RSI 약세 다이버전스",
     "골든크로스 발생",
@@ -83,6 +82,25 @@ ALWAYS_NOTABLE_TYPES = {
     "볼린저밴드 스퀴즈 해제(상방)",
     "볼린저밴드 스퀴즈 해제(하방)",
 }
+
+# 신호별 방향성 (상승 기대 신호 / 하락 기대 신호). 여기 없는 신호(SMA/일목
+# 터치, 스퀴즈 진입)는 그 자체로는 방향성이 없어서(중립) 점수 계산 대상에서
+# 자동 제외됨.
+SIGNAL_DIRECTION = {
+    "RSI 과매도 진입": "bullish",
+    "RSI 과매도 회복": "bullish",
+    "RSI 강세 다이버전스": "bullish",
+    "골든크로스 발생": "bullish",
+    "볼린저밴드 스퀴즈 해제(상방)": "bullish",
+    "RSI 과매수 진입": "bearish",
+    "RSI 과매수 회복": "bearish",
+    "RSI 약세 다이버전스": "bearish",
+    "데드크로스 발생": "bearish",
+    "볼린저밴드 스퀴즈 해제(하방)": "bearish",
+}
+
+GOOD_THRESHOLD = 3
+BAD_THRESHOLD = -2
 
 
 def _emoji(signal_type: str) -> str:
@@ -115,8 +133,62 @@ def _is_notable(ticker_alerts: list) -> bool:
     return False
 
 
-def _format_ticker_block(ticker: str, ticker_alerts: list) -> list:
-    """한 종목에 대한 상세 블록(현재가/등락율/신호별 상세)을 줄 단위 리스트로 반환"""
+def _compute_quality(ticker_alerts: list):
+    """
+    이 종목에 '새로' 뜬 신호들을 보고 자리 품질 점수를 계산.
+    방향성 있는 신호(SIGNAL_DIRECTION에 있는 것)가 하나도 없으면 채점 대상이
+    아니라고 보고 (None, None, []) 반환함 (단순 터치만 뜬 경우는 채점 안 함).
+
+    반환: (score:int|None, direction:"bullish"|"bearish"|None, reasons:list[str])
+    """
+    directions = [SIGNAL_DIRECTION.get(a["signal_type"]) for a in ticker_alerts]
+    directions = [d for d in directions if d]
+    if not directions:
+        return None, None, []
+
+    direction = "bullish" if directions.count("bullish") >= directions.count("bearish") else "bearish"
+
+    active = ticker_alerts[0].get("active_signals") or []
+    active_labels = {a["label"] for a in active}
+
+    score = 0
+    reasons = []
+
+    trend_state = None
+    if "골든크로스 상태" in active_labels:
+        trend_state = "bullish"
+    elif "데드크로스 상태" in active_labels:
+        trend_state = "bearish"
+
+    if trend_state == direction:
+        trend_kr = "상승" if direction == "bullish" else "하락"
+        score += 2
+        reasons.append(f"{trend_kr}추세(골든/데드크로스)와 같은 방향")
+    elif trend_state is not None and trend_state != direction:
+        counter_kr = "하락" if direction == "bullish" else "상승"
+        score -= 2
+        reasons.append(f"{counter_kr}추세 중 역행 신호 (추세 거스름 - 주의)")
+
+    overlap_count = len([a for a in active if a["label"] not in ("골든크로스 상태", "데드크로스 상태")])
+    overlap_bonus = min(max(overlap_count - 1, 0), 3)
+    if overlap_bonus > 0:
+        score += overlap_bonus
+        reasons.append(f"신호 {overlap_count}개 동시 겹침")
+
+    if ticker_alerts[0].get("cross_timeframe_signals"):
+        score += 2
+        reasons.append("일봉+4H 동시 확인(컨플루언스)")
+
+    if any(a.get("volume_spike") for a in ticker_alerts):
+        score += 1
+        reasons.append("거래량 급증 동반")
+
+    return score, direction, reasons
+
+
+def _format_ticker_block(ticker: str, ticker_alerts: list, quality=None) -> list:
+    """한 종목에 대한 상세 블록을 줄 단위 리스트로 반환.
+    quality를 넘기면 (score, direction, reasons) 요약 줄을 맨 위에 붙임."""
     first = ticker_alerts[0]
     change_pct = first["change_pct"]
     change_str = f"{change_pct:+.2f}%" if change_pct is not None else "N/A"
@@ -126,6 +198,12 @@ def _format_ticker_block(ticker: str, ticker_alerts: list) -> list:
     lines = [
         f"<b>{html.escape(ticker)}</b>  ${first['close']}  {change_emoji}{change_str}  ·  시총 {cap_str}"
     ]
+
+    if quality:
+        score, direction, reasons = quality
+        dir_kr = "매수 관점" if direction == "bullish" else "매도/청산 관점"
+        sign = f"{score:+d}"
+        lines.append(f"  <b>점수 {sign} · {dir_kr}</b> — {' / '.join(reasons)}")
 
     inside_cloud = any(a.get("cloud_position") == "inside" for a in ticker_alerts)
     combinable = [a for a in ticker_alerts if a["signal_type"] in CLOUD_CONTEXT_TYPES]
@@ -169,27 +247,55 @@ def format_alerts(alerts: list, title: str, footer: str = "") -> str:
             order.append(a["ticker"])
         grouped[a["ticker"]].append(a)
 
-    notable_tickers = [t for t in order if _is_notable(grouped[t])]
-    plain_tickers = [t for t in order if t not in notable_tickers]
+    good, bad, notable, plain = [], [], [], []
+    quality_map = {}
+
+    for t in order:
+        ticker_alerts = grouped[t]
+        score, direction, reasons = _compute_quality(ticker_alerts)
+        if score is not None and score >= GOOD_THRESHOLD:
+            good.append(t)
+            quality_map[t] = (score, direction, reasons)
+        elif score is not None and score <= BAD_THRESHOLD:
+            bad.append(t)
+            quality_map[t] = (score, direction, reasons)
+        elif _is_notable(ticker_alerts):
+            notable.append(t)
+        else:
+            plain.append(t)
 
     lines = [f"<b>{html.escape(title)}</b>", ""]
     lines.append(
-        f"총 {len(order)}종목 신호 · ⭐ 주목 {len(notable_tickers)} · 일반 {len(plain_tickers)}"
+        f"총 {len(order)}종목 · 🌟 고품질 {len(good)} · ⚠️ 주의 {len(bad)} · ⭐ 주목 {len(notable)} · 일반 {len(plain)}"
     )
     lines.append("")
 
-    if notable_tickers:
+    if good:
+        lines.append("<b>━━━ 🌟 고품질 자리 (추세 정합 + 다중 확인) ━━━</b>")
+        lines.append("")
+        for ticker in sorted(good, key=lambda t: quality_map[t][0], reverse=True):
+            lines.extend(_format_ticker_block(ticker, grouped[ticker], quality=quality_map[ticker]))
+            lines.append("")
+
+    if bad:
+        lines.append("<b>━━━ ⚠️ 주의 필요 (추세 역행 신호) ━━━</b>")
+        lines.append("")
+        for ticker in sorted(bad, key=lambda t: quality_map[t][0]):
+            lines.extend(_format_ticker_block(ticker, grouped[ticker], quality=quality_map[ticker]))
+            lines.append("")
+
+    if notable:
         lines.append("<b>━━━ ⭐ 주목할 신호 ━━━</b>")
         lines.append("")
-        for ticker in notable_tickers:
+        for ticker in notable:
             lines.extend(_format_ticker_block(ticker, grouped[ticker]))
             lines.append("")
 
-    if plain_tickers:
+    if plain:
         lines.append("<b>━━━ 나머지 신호 (단순, 압축표시) ━━━</b>")
         lines.append("")
         by_type = {}
-        for t in plain_tickers:
+        for t in plain:
             signal_type = grouped[t][0]["signal_type"]
             by_type.setdefault(signal_type, []).append(t)
 
