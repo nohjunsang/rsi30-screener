@@ -10,7 +10,7 @@ name: EOD Signal Report
 # -> 20:00~21:20 UTC 범위를 5분 간격으로 커버해서 두 경우 다 포함.
 on:
   schedule:
-    - cron: '*/5 20-21 * * 1-5'
+    - cron: '3,8,13,18,23,28,33,38,43,48,53,58 20-21 * * 1-5'
   workflow_dispatch:
     inputs:
       test:
