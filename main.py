@@ -42,7 +42,7 @@ NY_TZ = ZoneInfo("America/New_York")
 
 # 마감(16:00 ET) 정각부터 +15분까지만 "마감 직후"로 인정
 CLOSE_TIME = (16, 0)
-WINDOW_MINUTES_AFTER_CLOSE = 15
+WINDOW_MINUTES_AFTER_CLOSE = 120
 
 SENT_MARKER_FILE = Path(__file__).parent / "eod_sent.json"
 
