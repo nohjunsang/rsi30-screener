@@ -1,0 +1,1404 @@
+{
+  "AAPL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "bearish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "ABBV": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "ABNB": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "ABT": {
+    "rsi_zone": "oversold",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "bullish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "ADI": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "AEP": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "AMAT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "AMD": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "AMGN": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "bullish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "AMT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "AMZN": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "ANET": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "APD": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "APH": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "APP": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "AVB": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "AVGO": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "AXP": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "bearish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "BA": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "BAC": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "BKNG": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "BLK": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "BMY": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "BNY": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "bb_squeeze_state": "normal"
+  },
+  "BRK-B": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "touching",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "BX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "bearish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "C": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "CAT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "CB": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "CDNS": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "CEG": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "CL": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "touching",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "CMCSA": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "COF": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "COP": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "COST": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "CRH": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "CRM": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "CRWD": {
+    "rsi_zone": "overbought",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "CSCO": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "CTVA": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "CVS": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "CVX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "D": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "DE": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "DELL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "bearish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "DHR": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "DIS": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "DLR": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "DUK": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "ECL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "EOG": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "EQIX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "ETN": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "ETR": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "FCX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "FTNT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "GE": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "GEV": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "GILD": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "GLW": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "GOOG": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "GOOGL": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "GS": {
+    "rsi_zone": "overbought",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "bearish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "HD": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "HOOD": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "HWM": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "IBM": {
+    "rsi_zone": "oversold",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "bullish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "INTC": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "ISRG": {
+    "rsi_zone": "oversold",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "JNJ": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "JPM": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "KLAC": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "KMI": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "KO": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "LIN": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "touching",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "LLY": {
+    "rsi_zone": "oversold",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "bullish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "LMT": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "LOW": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "LRCX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MA": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MAR": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "MCD": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "bullish",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "MDLZ": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "MDT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "META": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MNST": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MO": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MPC": {
+    "rsi_zone": "overbought",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MRK": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MRVL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "MS": {
+    "rsi_zone": "overbought",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "MSFT": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "MU": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "NAIL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "NEE": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "NEM": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "NFLX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "NOW": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "NUE": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "NVDA": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "O": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "ORCL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "PANW": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "PEP": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "PFE": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "PG": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "below",
+    "divergence": "bullish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "PGR": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "bullish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "PH": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "PLD": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "PLTR": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "PM": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "PNC": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "PSA": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "PSX": {
+    "rsi_zone": "overbought",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "QCOM": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "RTX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SBUX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SCHW": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "SHW": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SLB": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SNDK": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "SO": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "SOXL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SPG": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SPGI": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SRE": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "STX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "SYK": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "T": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "TJX": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "bullish",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "TMO": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "bearish",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "TMUS": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "TSLA": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "TSLQ": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "inside",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "TT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "TXN": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "UBER": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "touching",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "UNH": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "UNP": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "V": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "VLO": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "VMC": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "VRT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "VRTX": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "VST": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "VTR": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "VZ": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "WBD": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "WDC": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "below",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "squeeze"
+  },
+  "WELL": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "above",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "squeeze"
+  },
+  "WFC": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "top",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "WMB": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "WMT": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  },
+  "XEL": {
+    "rsi_zone": "normal",
+    "sma120": "touching",
+    "sma200": "normal",
+    "ichimoku_position": "bottom",
+    "divergence": "none",
+    "sma_cross": "above",
+    "bb_squeeze_state": "normal"
+  },
+  "XOM": {
+    "rsi_zone": "normal",
+    "sma120": "normal",
+    "sma200": "touching",
+    "ichimoku_position": "above",
+    "divergence": "bearish",
+    "sma_cross": "below",
+    "bb_squeeze_state": "normal"
+  }
+}
