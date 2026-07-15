@@ -1,10 +1,10 @@
 @echo off
 REM run_screener.bat
-REM 이 배치 파일이 있는 폴더로 자동 이동한 뒤 스크리너 실행
-REM (Task Scheduler는 기본 작업 폴더를 잡아주지 않아서 필요함)
+REM Moves to this script's folder then runs the daily (EOD) screener.
+REM (Legacy/local backup script - main automation now runs via GitHub Actions)
 
 cd /d "%~dp0"
 
-echo [%date% %time%] 스크리너 실행 시작 >> run_log.txt
+echo [%date% %time%] main.py run started >> run_log.txt
 python main.py >> run_log.txt 2>&1
-echo [%date% %time%] 스크리너 실행 종료 >> run_log.txt
+echo [%date% %time%] main.py run finished >> run_log.txt
