@@ -1,12 +1,18 @@
 """
 backtest.py
 지금 쓰고 있는 신호들(RSI 과매도/과매수, SMA120/200 터치, 일목균형표
-터치/돌파, RSI 다이버전스)이 과거에 실제로 얼마나 잘 맞았는지 검증하는
-백테스트. 거래량 급증 여부도 각 이벤트에 같이 기록됨(참고용 부가정보).
+터치, RSI 다이버전스, 골든크로스/데드크로스, 볼린저밴드 스퀴즈)이 과거에
+실제로 얼마나 잘 맞았는지 검증하는 백테스트. 거래량 급증 여부도 각
+이벤트에 같이 기록됨(참고용 부가정보).
+
+참고: 일목구름대 "돌파"(상방/하방)는 백테스트 결과 승률이 가장 낮고
+빈도가 가장 잦아서 실제 알림에서는 비활성화했지만(터치는 계속 사용),
+비교 참고용으로 백테스트 통계에는 계속 포함되어 있음.
 
 "신호가 발생한 시점" 각각에 대해, 그 이후 N거래일 뒤 가격이 얼마나
 움직였는지(수익률, 승률)를 집계함. config.py에 있는 것과 정확히 같은
-임계값(RSI 30/70, SMA ±1%, 일목 9/26/52, 다이버전스 룩백 등)을 그대로 재사용함.
+임계값(RSI 30/70, SMA ±1%, 일목 9/26/52, 다이버전스 룩백, SMA50/200
+교차, 볼린저밴드 20/2 등)을 그대로 재사용함.
 
 로컬에서 실행 (샌드박스는 금융 API 접근이 막혀있어서 여기선 못 돌림):
   pip install -r requirements.txt
@@ -43,6 +49,11 @@ from config import (
     RSI_DIVERGENCE_ZONE_BUFFER,
     VOLUME_LOOKBACK,
     VOLUME_SPIKE_MULTIPLIER,
+    SMA_CROSS_FAST,
+    SMA_CROSS_SLOW,
+    BB_PERIOD,
+    BB_STD_MULTIPLIER,
+    BB_SQUEEZE_LOOKBACK,
 )
 from indicators import wilder_rsi, detect_divergence, volume_spike_ratio
 
@@ -159,6 +170,30 @@ def compute_signal_series(df: pd.DataFrame) -> pd.DataFrame:
         out["volume_ratio"] = np.nan
         out["is_volume_spike"] = False
 
+    # ---- 골든크로스/데드크로스 (SMA50 vs SMA200 위치) ----
+    fast_sma = close.rolling(SMA_CROSS_FAST).mean()
+    slow_sma = close.rolling(SMA_CROSS_SLOW).mean()
+    cross_position = pd.Series(np.nan, index=close.index, dtype=object)
+    cross_position[fast_sma > slow_sma] = "above"
+    cross_position[fast_sma <= slow_sma] = "below"
+    out["sma_cross_position"] = cross_position
+
+    # ---- 볼린저 밴드 스퀴즈 ----
+    bb_middle = close.rolling(BB_PERIOD).mean()
+    bb_std = close.rolling(BB_PERIOD).std()
+    bb_upper = bb_middle + BB_STD_MULTIPLIER * bb_std
+    bb_lower = bb_middle - BB_STD_MULTIPLIER * bb_std
+    bandwidth = (bb_upper - bb_lower) / bb_middle
+    squeeze_cutoff = bandwidth.rolling(BB_SQUEEZE_LOOKBACK).quantile(0.10)
+    out["bb_is_squeeze"] = bandwidth <= squeeze_cutoff
+    out["bb_upper"] = bb_upper
+    out["bb_lower"] = bb_lower
+
+    breakout_dir = pd.Series(None, index=close.index, dtype=object)
+    breakout_dir[close > bb_upper] = "up"
+    breakout_dir[close < bb_lower] = "down"
+    out["bb_breakout_dir"] = breakout_dir
+
     return out
 
 
@@ -190,6 +225,15 @@ def detect_entries(sig: pd.DataFrame) -> pd.DataFrame:
     add_events(sig["ichimoku_position"] == "below", "일목구름대 하방 돌파")
     add_events(sig["divergence_kind"] == "bullish", "RSI 강세 다이버전스")
     add_events(sig["divergence_kind"] == "bearish", "RSI 약세 다이버전스")
+
+    add_events(sig["sma_cross_position"] == "above", "골든크로스 발생")
+    add_events(sig["sma_cross_position"] == "below", "데드크로스 발생")
+
+    add_events(sig["bb_is_squeeze"] == True, "볼린저밴드 스퀴즈 진입")  # noqa: E712
+
+    squeeze_release = (~sig["bb_is_squeeze"].fillna(False)) & (sig["bb_is_squeeze"].shift(1).fillna(False))
+    add_events(squeeze_release & (sig["bb_breakout_dir"] == "up"), "볼린저밴드 스퀴즈 해제(상방)")
+    add_events(squeeze_release & (sig["bb_breakout_dir"] == "down"), "볼린저밴드 스퀴즈 해제(하방)")
 
     return pd.DataFrame(events)
 

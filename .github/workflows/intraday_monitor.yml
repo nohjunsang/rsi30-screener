@@ -13,8 +13,8 @@ name: Intraday 4H Signal Monitor
 # 4시간봉 기준이라 15분보다 여유있게 30분 간격으로 체크.
 on:
   schedule:
-    - cron: '7,37 8-23 * * 1-5'
-    - cron: '7,37 0-1 * * 2-6'
+    - cron: '7,37 8-23 * * 1-5'   # 평일 08:07~23:37 UTC (정각/30분 혼잡 회피)
+    - cron: '7,37 0-1 * * 2-6'    # (EST 대비) 익일 00:07~01:37 UTC, UTC요일 화~토
   workflow_dispatch:
     inputs:
       test:

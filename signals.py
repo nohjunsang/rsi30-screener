@@ -7,7 +7,15 @@ signals.py
 
 import pandas as pd
 
-from indicators import wilder_rsi, sma_touch, ichimoku_position, detect_divergence, volume_spike_ratio
+from indicators import (
+    wilder_rsi,
+    sma_touch,
+    ichimoku_position,
+    detect_divergence,
+    volume_spike_ratio,
+    sma_cross_position,
+    bb_squeeze_state,
+)
 from config import (
     RSI_PERIOD,
     RSI_THRESHOLD,
@@ -23,6 +31,11 @@ from config import (
     RSI_DIVERGENCE_ZONE_BUFFER,
     VOLUME_LOOKBACK,
     VOLUME_SPIKE_MULTIPLIER,
+    SMA_CROSS_FAST,
+    SMA_CROSS_SLOW,
+    BB_PERIOD,
+    BB_STD_MULTIPLIER,
+    BB_SQUEEZE_LOOKBACK,
 )
 
 
@@ -41,6 +54,8 @@ def compute_signals(df: pd.DataFrame) -> dict:
                      "cloud_top":.., "cloud_bottom":..} | None,
         "divergence": ("bullish"|"bearish"|None, detail_dict|None),
         "volume_ratio": float | None,   # 평소 대비 거래량 배수 (Volume 없으면 None)
+        "sma_cross_position": "above"|"below"|None,  # SMA50 vs SMA200 위치 (골든/데드크로스 판정용)
+        "bb_squeeze": {"is_squeeze":bool, "bandwidth":float, "upper":.., "lower":.., "breakout":"up"|"down"|None} | None,
     }
     """
     close = df["Close"].dropna()
@@ -121,6 +136,12 @@ def compute_signals(df: pd.DataFrame) -> dict:
     vol_ratio = volume_spike_ratio(volume, VOLUME_LOOKBACK) if volume is not None else None
     is_volume_spike = bool(vol_ratio is not None and vol_ratio >= VOLUME_SPIKE_MULTIPLIER)
 
+    # ---- 골든크로스/데드크로스 (SMA50 vs SMA200 위치) ----
+    cross_position = sma_cross_position(close, SMA_CROSS_FAST, SMA_CROSS_SLOW)
+
+    # ---- 볼린저 밴드 스퀴즈 ----
+    bb_result = bb_squeeze_state(close, BB_PERIOD, BB_STD_MULTIPLIER, BB_SQUEEZE_LOOKBACK)
+
     return {
         "close": round(latest_close, 2),
         "change_pct": change_pct,
@@ -132,4 +153,6 @@ def compute_signals(df: pd.DataFrame) -> dict:
         "divergence_detail": divergence_detail,
         "volume_ratio": round(vol_ratio, 2) if vol_ratio is not None else None,
         "is_volume_spike": is_volume_spike,
+        "sma_cross_position": cross_position,
+        "bb_squeeze": bb_result,
     }

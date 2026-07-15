@@ -3,8 +3,9 @@ engine.py
 일봉/4시간봉 공통 스캔 엔진.
 
 종목별 OHLC 데이터로 신호(RSI 과매도/과매수 진입·회복, SMA120/200 터치,
-일목구름대 상단/하단 터치, [옵션] 구름대 상방/하방 돌파, RSI 다이버전스)를
-계산하고, 상태가 실제로 바뀐(전이) 것만 걸러서 알림 목록을 만듦.
+일목구름대 상단/하단 터치, [옵션] 구름대 상방/하방 돌파, RSI 다이버전스,
+골든크로스/데드크로스, 볼린저밴드 스퀴즈)를 계산하고, 상태가 실제로
+바뀐(전이) 것만 걸러서 알림 목록을 만듦.
 
 추가 기능:
   - 거래량 급증: 독자 신호는 아니고, 다른 신호가 뜰 때 "거래량도 평소보다
@@ -21,6 +22,7 @@ engine.py
 from signals import compute_signals
 from state import StateStore
 from data import get_market_cap_from_cache
+from config import SMA_CROSS_FAST, SMA_CROSS_SLOW
 
 
 def _market_cap_b(ticker):
@@ -50,6 +52,13 @@ def _active_signal_labels(state: StateStore, ticker: str) -> list:
         labels.append("RSI 강세 다이버전스")
     elif div == "bearish":
         labels.append("RSI 약세 다이버전스")
+    cross = state.get(ticker, "sma_cross")
+    if cross == "above":
+        labels.append("골든크로스 상태")
+    elif cross == "below":
+        labels.append("데드크로스 상태")
+    if state.get(ticker, "bb_squeeze_state") == "squeeze":
+        labels.append("볼린저밴드 스퀴즈")
     return labels
 
 
@@ -121,6 +130,15 @@ def scan_current_snapshot(tickers: list, get_df, cross_state_filename: str = Non
                     "RSI 약세 다이버전스",
                     f"가격 {d['ref_price']}→{d['today_price']} (상승) / RSI {d['ref_rsi']}→{d['today_rsi']} (하락)",
                 )
+
+        if sig.get("sma_cross_position") == "above":
+            _add("골든크로스 상태", f"SMA{SMA_CROSS_FAST}이 SMA{SMA_CROSS_SLOW} 위 (장기 상승추세)")
+        elif sig.get("sma_cross_position") == "below":
+            _add("데드크로스 상태", f"SMA{SMA_CROSS_FAST}이 SMA{SMA_CROSS_SLOW} 아래 (장기 하락추세)")
+
+        bb = sig.get("bb_squeeze")
+        if bb and bb["is_squeeze"]:
+            _add("볼린저밴드 스퀴즈", f"밴드폭 {bb['bandwidth']}% (최근 저점권) - 변동성 확대 임박 가능")
 
         if not ticker_signals:
             continue
@@ -272,6 +290,36 @@ def scan(
                     f"가격 {d['ref_price']}→{d['today_price']} (상승) / RSI {d['ref_rsi']}→{d['today_rsi']} (하락)",
                 )
 
+        # ---- 골든크로스/데드크로스 (SMA50 vs SMA200 위치 전이) ----
+        cross_position = sig.get("sma_cross_position")
+        cross_new = None
+        if cross_position:
+            cross_changed = state.check_transition(ticker, "sma_cross", cross_position)
+            if cross_changed:
+                if cross_position == "above":
+                    cross_new = "골든크로스 발생"
+                    _add(cross_new, f"SMA{SMA_CROSS_FAST}이 SMA{SMA_CROSS_SLOW}을 상향 돌파 (장기 상승전환)")
+                else:
+                    cross_new = "데드크로스 발생"
+                    _add(cross_new, f"SMA{SMA_CROSS_FAST}이 SMA{SMA_CROSS_SLOW}을 하향 돌파 (장기 하락전환)")
+
+        # ---- 볼린저 밴드 스퀴즈 (진입 + 해제/방향성 돌파) ----
+        bb = sig.get("bb_squeeze")
+        bb_new = None
+        if bb:
+            bb_status = "squeeze" if bb["is_squeeze"] else "normal"
+            bb_changed = state.check_transition(ticker, "bb_squeeze_state", bb_status)
+            if bb_changed:
+                if bb_status == "squeeze":
+                    bb_new = "볼린저밴드 스퀴즈 진입"
+                    _add(bb_new, f"밴드폭 {bb['bandwidth']}% (최근 저점권) - 변동성 확대 임박 가능")
+                elif bb["breakout"] == "up":
+                    bb_new = "볼린저밴드 스퀴즈 해제(상방)"
+                    _add(bb_new, f"상단밴드({bb['upper']}) 상향 돌파 - 변동성 확대 시작")
+                elif bb["breakout"] == "down":
+                    bb_new = "볼린저밴드 스퀴즈 해제(하방)"
+                    _add(bb_new, f"하단밴드({bb['lower']}) 하향 돌파 - 변동성 확대 시작")
+
         if not ticker_alerts:
             continue
 
@@ -305,6 +353,13 @@ def scan(
             active_signals.append({"label": "RSI 강세 다이버전스", "is_new": div_changed})
         elif div_now == "bearish":
             active_signals.append({"label": "RSI 약세 다이버전스", "is_new": div_changed})
+        cross_now = state.get(ticker, "sma_cross")
+        if cross_now == "above":
+            active_signals.append({"label": "골든크로스 상태", "is_new": cross_new == "골든크로스 발생"})
+        elif cross_now == "below":
+            active_signals.append({"label": "데드크로스 상태", "is_new": cross_new == "데드크로스 발생"})
+        if state.get(ticker, "bb_squeeze_state") == "squeeze":
+            active_signals.append({"label": "볼린저밴드 스퀴즈", "is_new": bb_new == "볼린저밴드 스퀴즈 진입"})
 
         # ---- 타임프레임 건너 컨플루언스 ----
         cross_signals = _active_signal_labels(cross_state, ticker) if cross_state else []

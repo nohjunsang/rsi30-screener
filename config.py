@@ -60,6 +60,24 @@ RSI_DIVERGENCE_ZONE_BUFFER = 10
 # 확인해서, 둘 다 겹치면 "고신뢰" 표시를 붙임.
 ENABLE_CROSS_TIMEFRAME_CONFLUENCE = True
 
+# ---- 골든크로스 / 데드크로스 (이동평균선 교차) ----
+# "터치"(가격이 이평선에 닿음)와는 다른 개념 - 이평선 두 개가 서로
+# 교차하는 것. SMA50이 SMA200을 위로 뚫으면 골든크로스(장기 상승전환
+# 신호), 아래로 뚫으면 데드크로스(장기 하락전환 신호). 자주 안 뜨는
+# 대신 뜨면 의미가 큰, 전통적으로 신뢰도 높다고 평가받는 추세 신호.
+SMA_CROSS_FAST = 50
+SMA_CROSS_SLOW = 200
+
+# ---- 볼린저 밴드 스퀴즈 ----
+# 다른 신호들과 달리 "가격 레벨"이 아니라 "변동성"을 봄. 밴드 폭이
+# 최근 BB_SQUEEZE_LOOKBACK일 중 가장 좁으면(변동성 수축) "스퀴즈 진입"
+# 알림 - 조만간 큰 움직임이 올 수 있다는 사전 경고성 신호. 스퀴즈였다가
+# 밴드 바깥으로 가격이 빠져나가면(변동성 확대 시작) 방향까지 같이
+# "스퀴즈 해제" 알림으로 알려줌.
+BB_PERIOD = 20
+BB_STD_MULTIPLIER = 2.0
+BB_SQUEEZE_LOOKBACK = 120
+
 # ---- Telegram 알림 ----
 # GitHub Actions에서는 Repository Secrets로 주입되는 환경변수를 그대로 사용.
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")

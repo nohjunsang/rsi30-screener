@@ -5,7 +5,7 @@ name: Refresh Universe Cache
 # 매번 1000개 넘는 종목 시총을 새로 조회하지 않고 빠르게 동작함.
 on:
   schedule:
-    - cron: '12 11 * * 1-5'
+    - cron: '12 11 * * 1-5'   # 평일 UTC 11:12 (한국시간 20:12, 미국장 시작 전)
   workflow_dispatch:
 
 permissions:

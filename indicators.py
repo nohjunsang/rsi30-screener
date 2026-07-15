@@ -20,6 +20,96 @@ def wilder_rsi(close: pd.Series, period: int = 14) -> pd.Series:
     return rsi
 
 
+def sma_cross_position(close: pd.Series, fast_period: int, slow_period: int):
+    """
+    골든크로스/데드크로스 판정용: 빠른 이평선(fast)이 느린 이평선(slow)보다
+    위에 있는지 아래에 있는지 현재 위치만 반환 (상태 전이 감지는 engine.py에서).
+
+    반환: "above"(골든크로스 상태) | "below"(데드크로스 상태) | None(데이터 부족)
+    """
+    if len(close) < slow_period:
+        return None
+
+    fast = close.rolling(fast_period).mean().iloc[-1]
+    slow = close.rolling(slow_period).mean().iloc[-1]
+
+    if pd.isna(fast) or pd.isna(slow):
+        return None
+
+    return "above" if fast > slow else "below"
+
+
+def bollinger_bands(close: pd.Series, period: int, std_multiplier: float):
+    """볼린저 밴드 상단/중단/하단 계산. 반환: (upper, middle, lower) - 각각 마지막 값(float) 또는 None"""
+    if len(close) < period:
+        return None, None, None
+
+    window = close.rolling(period)
+    middle = window.mean().iloc[-1]
+    std = window.std().iloc[-1]
+
+    if pd.isna(middle) or pd.isna(std):
+        return None, None, None
+
+    upper = middle + std_multiplier * std
+    lower = middle - std_multiplier * std
+    return float(upper), float(middle), float(lower)
+
+
+def bb_squeeze_state(close: pd.Series, period: int, std_multiplier: float, lookback: int):
+    """
+    볼린저 밴드 스퀴즈(변동성 수축) 여부 판정.
+    "밴드 폭이 최근 lookback일 중 가장 좁다"를 스퀴즈로 정의함.
+
+    반환: dict {
+        "is_squeeze": bool,           # 지금이 스퀴즈 상태인지
+        "bandwidth": float,            # 현재 밴드폭 비율 ((상단-하단)/중단)
+        "upper": float, "lower": float,
+        "breakout": "up"|"down"|None,  # 스퀴즈 중이 아니면, 밴드 바깥으로 뚫었는지
+    }
+    또는 데이터 부족 시 None
+    """
+    if len(close) < period + lookback:
+        return None
+
+    window = close.rolling(period)
+    middle = window.mean()
+    std = window.std()
+    upper = middle + std_multiplier * std
+    lower = middle - std_multiplier * std
+    bandwidth = (upper - lower) / middle
+
+    recent_bandwidth = bandwidth.iloc[-lookback:].dropna()
+    current_bw = bandwidth.iloc[-1]
+
+    if pd.isna(current_bw) or len(recent_bandwidth) < lookback // 2:
+        return None
+
+    # "정확히 최솟값인 딱 하루"만 스퀴즈로 잡으면 너무 빡빡해서(노이즈에 취약),
+    # 최근 lookback일 중 하위 10% 구간에 들어오면 스퀴즈로 인정함
+    squeeze_cutoff = recent_bandwidth.quantile(0.10)
+    is_squeeze = bool(current_bw <= squeeze_cutoff)
+
+    latest_close = close.iloc[-1]
+    latest_upper = upper.iloc[-1]
+    latest_lower = lower.iloc[-1]
+
+    breakout = None
+    if not is_squeeze:
+        if latest_close > latest_upper:
+            breakout = "up"
+        elif latest_close < latest_lower:
+            breakout = "down"
+
+    return {
+        "is_squeeze": is_squeeze,
+        "bandwidth": round(float(current_bw) * 100, 2),
+        "upper": round(float(latest_upper), 2) if not pd.isna(latest_upper) else None,
+        "lower": round(float(latest_lower), 2) if not pd.isna(latest_lower) else None,
+        "breakout": breakout,
+    }
+
+
 def detect_divergence(
     close: pd.Series,
     rsi: pd.Series,

@@ -32,7 +32,7 @@ def scan_daily_alerts(state_filename: str = None):
         tickers,
         get_df,
         state_filename,
-        enable_cloud_breakout=True,
+        enable_cloud_breakout=False,  # 백테스트 결과 승률 최저(53~55%) + 최다빈도라 비활성화
         cross_state_filename="h4_state.json",
         cross_label="4H",
     )

@@ -40,7 +40,11 @@ from formatting import format_alerts
 
 NY_TZ = ZoneInfo("America/New_York")
 
-# 마감(16:00 ET) 정각부터 +15분까지만 "마감 직후"로 인정
+# 마감(16:00 ET) 정각부터 +120분까지 "마감 직후"로 인정.
+# (GitHub Actions가 혼잡할 때 예약 실행이 몇 시간씩 늦게 트리거되는 경우가
+#  실제로 있어서, 너무 빡빡하게 잡으면 그날 리포트를 통째로 놓칠 수 있음.
+#  중복 전송은 eod_sent.json(하루 1번 마커)이 따로 막아주므로, 이 윈도우를
+#  넉넉하게 잡아도 스팸 걱정은 없음.)
 CLOSE_TIME = (16, 0)
 WINDOW_MINUTES_AFTER_CLOSE = 120
 
