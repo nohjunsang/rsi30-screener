@@ -100,14 +100,15 @@ def main():
 
     title_prefix = "🧪 [테스트] " if args.test else ""
     title = f"{title_prefix}🔔 장 시작 20분 전 리마인더 ({today_str})"
+    as_of = "전날 미국 정규장 종가 기준 스냅샷 (오늘 프리마켓 가격변동 미반영)"
     footer = "전날 종가 기준 · 지금 조건을 만족 중인 종목 전체 요약 (신규 여부와 무관)"
 
     if not signals:
-        msg = f"{title}\n\n지금 조건을 만족하는 종목이 하나도 없습니다."
+        msg = f"{title}\n🕐 {as_of}\n\n지금 조건을 만족하는 종목이 하나도 없습니다."
         print(msg)
         send_telegram(msg)
     else:
-        msg = format_alerts(signals, title=title, footer=footer)
+        msg = format_alerts(signals, title=title, footer=footer, as_of=as_of)
         print(msg)
         send_telegram(msg)
 

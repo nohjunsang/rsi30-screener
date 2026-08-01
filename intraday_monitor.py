@@ -83,11 +83,15 @@ def main():
 
     title_prefix = "🧪 [테스트] " if args.test else ""
     title = f"{title_prefix}🚨 4시간봉 신호 ({now_ny.strftime('%Y-%m-%d %H:%M')} ET)"
+    as_of = (
+        f"스캔 실행 {now_ny.strftime('%H:%M')} ET 기준 · 실제 신호가 발생한 4H 봉 마감 시각은 "
+        "이보다 최대 30분 정도 더 이를 수 있음"
+    )
     footer = "(장중 잠정치, 4시간봉 마감 전까지 변동 가능 · 프리/애프터마켓은 유동성이 낮아 신호가 더 불안정할 수 있음)"
     if args.test:
         footer += " · 테스트 모드로 전송됨 - 실제 상태에는 저장 안 됨"
 
-    msg = format_alerts(alerts, title=title, footer=footer)
+    msg = format_alerts(alerts, title=title, footer=footer, as_of=as_of)
     print(msg)
     send_telegram(msg)
 

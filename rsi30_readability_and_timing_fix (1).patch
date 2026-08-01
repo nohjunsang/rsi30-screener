@@ -1,0 +1,142 @@
+diff --git a/formatting.py b/formatting.py
+index 5a0a031..649018a 100644
+--- a/formatting.py
++++ b/formatting.py
+@@ -64,6 +64,9 @@ CLOUD_CONTEXT_TYPES = {
+ }
+ 
+ # 이 신호들은 단독으로 떠도 항상 "주목할 신호"로 자세히 보여줌
++# 골든/데드크로스는 여기서 뺐음: 다른 확인 신호 없이 단독으로만 뜨면
++# 흔한 이벤트라 "나머지 신호(압축표시)"로 내려가고, 다른 신호와 겹치면
++# len(ticker_alerts) > 1 조건으로 어차피 자세히 보여짐.
+ ALWAYS_NOTABLE_TYPES = {
+     "RSI 과매도 진입",
+     "RSI 과매도 회복",
+@@ -73,10 +76,6 @@ ALWAYS_NOTABLE_TYPES = {
+     "RSI 과매수",
+     "RSI 강세 다이버전스",
+     "RSI 약세 다이버전스",
+-    "골든크로스 발생",
+-    "골든크로스 상태",
+-    "데드크로스 발생",
+-    "데드크로스 상태",
+     "볼린저밴드 스퀴즈 진입",
+     "볼린저밴드 스퀴즈",
+     "볼린저밴드 스퀴즈 해제(상방)",
+@@ -235,9 +234,9 @@ def _format_ticker_block(ticker: str, ticker_alerts: list, quality=None) -> list
+     return lines
+ 
+ 
+-def format_alerts(alerts: list, title: str, footer: str = "") -> str:
++def format_alerts(alerts: list, title: str, footer: str = "", as_of: str = "") -> str:
+     if not alerts:
+-        return title
++        return f"{title}\n🕐 {as_of}" if as_of else title
+ 
+     grouped = {}
+     order = []
+@@ -264,7 +263,10 @@ def format_alerts(alerts: list, title: str, footer: str = "") -> str:
+         else:
+             plain.append(t)
+ 
+-    lines = [f"<b>{html.escape(title)}</b>", ""]
++    lines = [f"<b>{html.escape(title)}</b>"]
++    if as_of:
++        lines.append(f"🕐 {html.escape(as_of)}")
++    lines.append("")
+     lines.append(
+         f"총 {len(order)}종목 · 🌟 고품질 {len(good)} · ⚠️ 주의 {len(bad)} · ⭐ 주목 {len(notable)} · 일반 {len(plain)}"
+     )
+diff --git a/intraday_monitor.py b/intraday_monitor.py
+index 030373b..e026434 100644
+--- a/intraday_monitor.py
++++ b/intraday_monitor.py
+@@ -83,11 +83,15 @@ def main():
+ 
+     title_prefix = "🧪 [테스트] " if args.test else ""
+     title = f"{title_prefix}🚨 4시간봉 신호 ({now_ny.strftime('%Y-%m-%d %H:%M')} ET)"
++    as_of = (
++        f"스캔 실행 {now_ny.strftime('%H:%M')} ET 기준 · 실제 신호가 발생한 4H 봉 마감 시각은 "
++        "이보다 최대 30분 정도 더 이를 수 있음"
++    )
+     footer = "(장중 잠정치, 4시간봉 마감 전까지 변동 가능 · 프리/애프터마켓은 유동성이 낮아 신호가 더 불안정할 수 있음)"
+     if args.test:
+         footer += " · 테스트 모드로 전송됨 - 실제 상태에는 저장 안 됨"
+ 
+-    msg = format_alerts(alerts, title=title, footer=footer)
++    msg = format_alerts(alerts, title=title, footer=footer, as_of=as_of)
+     print(msg)
+     send_telegram(msg)
+ 
+diff --git a/kr_open_digest.py b/kr_open_digest.py
+index be30e0f..92675da 100644
+--- a/kr_open_digest.py
++++ b/kr_open_digest.py
+@@ -105,17 +105,18 @@ def main():
+ 
+     title_prefix = "🧪 [테스트] " if args.test else ""
+     title = f"{title_prefix}🇰🇷 한국장 시작 20분 전 리마인더 ({today_str})"
++    as_of = "미국 정규장 마감(전날 16:00 ET) 종가 기준 · 애프터마켓 가격변동 미반영"
+     footer = (
+         "미국 정규장 마감(전날 종가) 기준 · 애프터마켓 가격변동은 미반영 "
+         "(EOD Signal Report와 동일 내용, 재확인/안전망 용도)"
+     )
+ 
+     if not signals:
+-        msg = f"{title}\n\n지금 조건을 만족하는 종목이 하나도 없습니다.\n\n{footer}"
++        msg = f"{title}\n🕐 {as_of}\n\n지금 조건을 만족하는 종목이 하나도 없습니다.\n\n{footer}"
+         print(msg)
+         send_telegram(msg)
+     else:
+-        msg = format_alerts(signals, title=title, footer=footer)
++        msg = format_alerts(signals, title=title, footer=footer, as_of=as_of)
+         print(msg)
+         send_telegram(msg)
+ 
+diff --git a/main.py b/main.py
+index b2dc0e6..03ab999 100644
+--- a/main.py
++++ b/main.py
+@@ -99,9 +99,10 @@ def main():
+     state_filename = "test_daily_state_tmp.json" if args.test else None
+     alerts, state = scan_daily_alerts(state_filename=state_filename)
+     today = pd.Timestamp.today().date()
++    as_of = f"{today} 16:00 ET(정규장 마감) 종가 기준 · 발송은 마감 후 최대 2시간 이내 지연될 수 있음"
+ 
+     if not alerts:
+-        msg = f"[{today}] 새로운 신호 없음 (일봉 기준)"
++        msg = f"[{today}] 새로운 신호 없음 (일봉 기준)\n🕐 {as_of}"
+         if args.test:
+             msg = "🧪 [테스트] " + msg + " (지금 조건 충족하는 종목이 하나도 없음 - 실제로 아무 신호도 없는 상태)"
+         print(msg)
+@@ -112,7 +113,7 @@ def main():
+         return
+ 
+     title_prefix = "🧪 [테스트] " if args.test else ""
+-    msg = format_alerts(alerts, title=f"{title_prefix}📊 일봉 신호 리포트 ({today})")
++    msg = format_alerts(alerts, title=f"{title_prefix}📊 일봉 신호 리포트 ({today})", as_of=as_of)
+     print(msg)
+     send_telegram(msg)
+ 
+diff --git a/premarket_digest.py b/premarket_digest.py
+index 8a0567a..d81a20d 100644
+--- a/premarket_digest.py
++++ b/premarket_digest.py
+@@ -100,14 +100,15 @@ def main():
+ 
+     title_prefix = "🧪 [테스트] " if args.test else ""
+     title = f"{title_prefix}🔔 장 시작 20분 전 리마인더 ({today_str})"
++    as_of = "전날 미국 정규장 종가 기준 스냅샷 (오늘 프리마켓 가격변동 미반영)"
+     footer = "전날 종가 기준 · 지금 조건을 만족 중인 종목 전체 요약 (신규 여부와 무관)"
+ 
+     if not signals:
+-        msg = f"{title}\n\n지금 조건을 만족하는 종목이 하나도 없습니다."
++        msg = f"{title}\n🕐 {as_of}\n\n지금 조건을 만족하는 종목이 하나도 없습니다."
+         print(msg)
+         send_telegram(msg)
+     else:
+-        msg = format_alerts(signals, title=title, footer=footer)
++        msg = format_alerts(signals, title=title, footer=footer, as_of=as_of)
+         print(msg)
+         send_telegram(msg)
+ 

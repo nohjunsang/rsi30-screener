@@ -64,6 +64,9 @@ CLOUD_CONTEXT_TYPES = {
 }
 
 # 이 신호들은 단독으로 떠도 항상 "주목할 신호"로 자세히 보여줌
+# 골든/데드크로스는 여기서 뺐음: 다른 확인 신호 없이 단독으로만 뜨면
+# 흔한 이벤트라 "나머지 신호(압축표시)"로 내려가고, 다른 신호와 겹치면
+# len(ticker_alerts) > 1 조건으로 어차피 자세히 보여짐.
 ALWAYS_NOTABLE_TYPES = {
     "RSI 과매도 진입",
     "RSI 과매도 회복",
@@ -73,10 +76,6 @@ ALWAYS_NOTABLE_TYPES = {
     "RSI 과매수",
     "RSI 강세 다이버전스",
     "RSI 약세 다이버전스",
-    "골든크로스 발생",
-    "골든크로스 상태",
-    "데드크로스 발생",
-    "데드크로스 상태",
     "볼린저밴드 스퀴즈 진입",
     "볼린저밴드 스퀴즈",
     "볼린저밴드 스퀴즈 해제(상방)",
@@ -235,9 +234,9 @@ def _format_ticker_block(ticker: str, ticker_alerts: list, quality=None) -> list
     return lines
 
 
-def format_alerts(alerts: list, title: str, footer: str = "") -> str:
+def format_alerts(alerts: list, title: str, footer: str = "", as_of: str = "") -> str:
     if not alerts:
-        return title
+        return f"{title}\n🕐 {as_of}" if as_of else title
 
     grouped = {}
     order = []
@@ -264,7 +263,10 @@ def format_alerts(alerts: list, title: str, footer: str = "") -> str:
         else:
             plain.append(t)
 
-    lines = [f"<b>{html.escape(title)}</b>", ""]
+    lines = [f"<b>{html.escape(title)}</b>"]
+    if as_of:
+        lines.append(f"🕐 {html.escape(as_of)}")
+    lines.append("")
     lines.append(
         f"총 {len(order)}종목 · 🌟 고품질 {len(good)} · ⚠️ 주의 {len(bad)} · ⭐ 주목 {len(notable)} · 일반 {len(plain)}"
     )

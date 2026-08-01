@@ -105,17 +105,18 @@ def main():
 
     title_prefix = "🧪 [테스트] " if args.test else ""
     title = f"{title_prefix}🇰🇷 한국장 시작 20분 전 리마인더 ({today_str})"
+    as_of = "미국 정규장 마감(전날 16:00 ET) 종가 기준 · 애프터마켓 가격변동 미반영"
     footer = (
         "미국 정규장 마감(전날 종가) 기준 · 애프터마켓 가격변동은 미반영 "
         "(EOD Signal Report와 동일 내용, 재확인/안전망 용도)"
     )
 
     if not signals:
-        msg = f"{title}\n\n지금 조건을 만족하는 종목이 하나도 없습니다.\n\n{footer}"
+        msg = f"{title}\n🕐 {as_of}\n\n지금 조건을 만족하는 종목이 하나도 없습니다.\n\n{footer}"
         print(msg)
         send_telegram(msg)
     else:
-        msg = format_alerts(signals, title=title, footer=footer)
+        msg = format_alerts(signals, title=title, footer=footer, as_of=as_of)
         print(msg)
         send_telegram(msg)
 

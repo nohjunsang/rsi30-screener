@@ -99,9 +99,10 @@ def main():
     state_filename = "test_daily_state_tmp.json" if args.test else None
     alerts, state = scan_daily_alerts(state_filename=state_filename)
     today = pd.Timestamp.today().date()
+    as_of = f"{today} 16:00 ET(정규장 마감) 종가 기준 · 발송은 마감 후 최대 2시간 이내 지연될 수 있음"
 
     if not alerts:
-        msg = f"[{today}] 새로운 신호 없음 (일봉 기준)"
+        msg = f"[{today}] 새로운 신호 없음 (일봉 기준)\n🕐 {as_of}"
         if args.test:
             msg = "🧪 [테스트] " + msg + " (지금 조건 충족하는 종목이 하나도 없음 - 실제로 아무 신호도 없는 상태)"
         print(msg)
@@ -112,7 +113,7 @@ def main():
         return
 
     title_prefix = "🧪 [테스트] " if args.test else ""
-    msg = format_alerts(alerts, title=f"{title_prefix}📊 일봉 신호 리포트 ({today})")
+    msg = format_alerts(alerts, title=f"{title_prefix}📊 일봉 신호 리포트 ({today})", as_of=as_of)
     print(msg)
     send_telegram(msg)
 
