@@ -1,0 +1,338 @@
+--- a/backtest.py	2026-08-01 15:13:39.839839257 +0000
++++ b/backtest.py	2026-08-01 15:13:11.408392746 +0000
+@@ -9,13 +9,13 @@
+ 빈도가 가장 잦아서 실제 알림에서는 비활성화했지만(터치는 계속 사용),
+ 비교 참고용으로 백테스트 통계에는 계속 포함되어 있음.
+ 
+-이 파일은 두 가지 방식으로 신호를 검증함:
++이 파일은 세 가지 방식으로 신호를 검증함:
+ 
+   1) 고정 기간 수익률 (기존): "신호가 발생한 시점" 각각에 대해, 그
+      이후 N거래일 뒤 가격이 얼마나 움직였는지(수익률, 승률)를 집계함.
+      -> backtest_events.csv / backtest_summary.csv
+ 
+-  2) 손익비(목표가/손절가) 시뮬레이션 (신규): formatting.py의
++  2) 손익비(목표가/손절가) 시뮬레이션: formatting.py의
+      SIGNAL_DIRECTION에 매수/매도 방향이 정의된 신호(RSI 과매도/과매수
+      진입, RSI 다이버전스, 골든/데드크로스, 볼린저 스퀴즈 해제)만 대상으로
+      "다음날 시가에 진입해서, 손절 -stop_pct% / 목표 +stop_pct*rr%를
+@@ -27,6 +27,18 @@
+      없어서 이 시뮬레이션 대상에서 자동 제외됨 - 라이브 알림에서 "매수/매도
+      관점"이 붙는 신호와 정확히 같은 기준을 재사용함)
+ 
++  3) 물타기(추가매수) 시뮬레이션 (신규, --dca-max-adds>0일 때만): 2)와
++     같은 진입 대상/시점을 쓰되, 손절 대신 "직전 체결가 대비
++     dca_step_pct%만큼 더 불리해지면 추가매수"를 dca_multiplier배씩
++     최대 dca_max_adds회까지 허용함. 목표가는 그때그때 갱신되는 평단가
++     기준으로 다시 계산되고(그래서 물을 타면 같은 반등폭으로도 더 쉽게
++     목표에 닿을 수 있음), 실탄을 다 쓰고 나서도 계속 불리해지면 마지막
++     체결가 기준 -stop_pct%에서 최종 손절함.
++     -> backtest_dca_events.csv / backtest_dca_summary.csv
++     (2)의 결과와 나란히 비교해서 "물타기가 실제로 승률/손익을 개선하는지,
++     대신 자본을 얼마나 더 많이 묶어두게 되는지"를 같이 봐야 함 - 물타기는
++     반등에 필요한 %는 줄여주지만 반등 확률 자체를 높여주는 건 아니므로)
++
+ config.py에 있는 것과 정확히 같은 임계값(RSI 30/70, SMA ±1%, 일목
+ 9/26/52, 다이버전스 룩백, SMA50/200 교차, 볼린저밴드 20/2 등)을 그대로
+ 재사용함.
+@@ -42,6 +54,8 @@
+   python backtest.py --telegram                        # 결과 요약을 Telegram으로도 전송
+   python backtest.py --timeframe 4h                     # 4시간봉 기준으로 검증 (라이브 intraday_monitor.py와 같은 로직)
+   python backtest.py --timeframe 4h --years 2 --telegram  # 4h는 야후 60분봉 한계상 최대 730일(≈2년)까지만
++  python backtest.py --dca-max-adds 3                     # 물타기(추가매수) 시뮬레이션도 같이 (기본: --stop-pct%마다, 최대3회)
++  python backtest.py --dca-max-adds 3 --dca-step-pct 2 --dca-multiplier 1.5 --telegram   # 2%마다, 갈수록 강하게(1.5배씩) 최대3회
+ 
+ 결과물 (--timeframe 4h로 돌리면 전부 _4h가 붙은 파일명으로 따로 저장되어
+   일봉 결과와 안 섞임: backtest_events_4h.csv 등):
+@@ -50,6 +64,8 @@
+   backtest_summary.png       : 신호별 승률 막대그래프 (matplotlib 있으면)
+   backtest_tpsl_events.csv   : 방향성 신호별 손익비 시뮬레이션 개별 거래 기록
+   backtest_tpsl_summary.csv  : 신호별 목표/손절 적중률 + 기대값(R) 집계
++  backtest_dca_events.csv    : (--dca-max-adds>0일 때만) 물타기 시뮬레이션 개별 거래 기록
++  backtest_dca_summary.csv   : (--dca-max-adds>0일 때만) 신호별 물타기 적중률 + 평균손익 집계
+ """
+ 
+ import argparse
+@@ -144,9 +160,29 @@
+         help="신호 발생 시점으로부터 몇 칸(일봉=거래일 / 4h=4H봉) 뒤 시가에 진입할지 (기본 1 = 다음 칸 시가. "
+         "신호는 해당 봉 종가 확정 후에야 알 수 있으므로 같은 봉 종가 진입은 비현실적)",
+     )
++    p.add_argument(
++        "--dca-max-adds",
++        type=int,
++        default=0,
++        help="물타기(추가매수) 시뮬레이션도 같이 돌릴지 - 최대 몇 번까지 추가매수 허용할지 (기본 0 = 물타기 시뮬레이션 안 함)",
++    )
++    p.add_argument(
++        "--dca-step-pct",
++        type=float,
++        default=None,
++        help="직전 체결가 대비 몇 %% 더 불리하게 움직이면 추가매수할지 (기본: --stop-pct와 동일한 값)",
++    )
++    p.add_argument(
++        "--dca-multiplier",
++        type=float,
++        default=1.0,
++        help="매 회차 추가매수 수량 배수 (기본 1.0 = 매번 동일 수량, 1.5 이상이면 갈수록 강하게 태우는 마틴게일 식)",
++    )
+     args = p.parse_args()
+     if args.horizons is None:
+         args.horizons = "6,12,24" if args.timeframe == "4h" else "5,10,20"
++    if args.dca_step_pct is None:
++        args.dca_step_pct = args.stop_pct
+     return args
+ 
+ 
+@@ -494,6 +530,149 @@
+     return pd.DataFrame(rows).sort_values("count", ascending=False)
+ 
+ 
++def simulate_dca(
++    events: pd.DataFrame,
++    df: pd.DataFrame,
++    stop_pct: float,
++    rr_ratio: float,
++    dca_step_pct: float,
++    dca_max_adds: int,
++    dca_multiplier: float,
++    max_hold: int,
++    entry_lag: int = 1,
++) -> pd.DataFrame:
++    """simulate_tp_sl과 진입 시점/대상 신호는 완전히 같지만, 손절가에
++    도달하는 대신 "일정 % 더 빠질 때마다 추가 매수(물타기)"를 최대
++    dca_max_adds번까지 허용하고, 그때그때 평단가 기준으로 목표가를
++    다시 계산하는 시뮬레이션. 진짜 손절(하드 스탑)은 "추가 매수 다
++    써버린 뒤에도" 마지막 체결가 기준 stop_pct%만큼 더 빠지면 발동함
++    (물 탈 실탄이 남아있는 동안은 손절 안 함 - 실제 물타기 매매의 의도와
++    동일하게 재현).
++
++    - dca_step_pct: 직전 체결가(최초 진입가 또는 마지막 추가매수가) 대비
++      몇 % 더 불리하게 움직이면 추가매수할지
++    - dca_multiplier: 매 회차 추가매수 수량이 직전 대비 몇 배인지
++      (1.0=매번 동일 수량, 1.5 이상=갈수록 강하게 태우는 마틴게일 식)
++    - 같은 봉 안에서 목표/추가매수가 동시에 조건을 만족하면 "목표 먼저"로
++      보수적으로 처리(추가매수 조건 확인 전에 그 봉에서 이미 익절하고
++      끝난 것으로 침). 하드 스탑은 실탄이 없을 때만 확인함.
++    - r_multiple 대신 avg_cost(평단가) 기준 실현 손익률(pnl_pct)로 집계함 -
++      물타기는 회차마다 실제로 투입되는 자본(총 유닛 수)이 달라져서, 손절
++      1회 폭을 "1R"로 고정하는 기존 R-멀티플 정의가 그대로는 안 맞기 때문.
++    """
++    if events.empty or dca_max_adds <= 0:
++        return pd.DataFrame()
++
++    dates = list(df.index)
++    date_to_idx = {d: i for i, d in enumerate(dates)}
++    opens, highs, lows, closes = df["Open"], df["High"], df["Low"], df["Close"]
++
++    rows = []
++    for _, ev in events.iterrows():
++        direction = SIGNAL_DIRECTION.get(ev["signal_type"])
++        if not direction:
++            continue
++        sig_idx = date_to_idx.get(ev["date"])
++        if sig_idx is None:
++            continue
++        entry_idx = sig_idx + entry_lag
++        if entry_idx >= len(dates):
++            continue
++        entry_price = opens.iloc[entry_idx]
++        if pd.isna(entry_price) or entry_price <= 0:
++            continue
++
++        bullish = direction == "bullish"
++        last_fill_price = entry_price
++        total_units = 1.0
++        total_cost = entry_price * 1.0
++        adds_used = 0
++        outcome = "time_exit"
++        exit_idx = min(entry_idx + max_hold, len(dates) - 1)
++        exit_price = closes.iloc[exit_idx]
++
++        for i in range(entry_idx, min(entry_idx + max_hold, len(dates) - 1) + 1):
++            avg_cost = total_cost / total_units
++            hi, lo = highs.iloc[i], lows.iloc[i]
++
++            target_price = avg_cost * (1 + rr_ratio * stop_pct / 100) if bullish else avg_cost * (1 - rr_ratio * stop_pct / 100)
++            hit_target = hi >= target_price if bullish else lo <= target_price
++            if hit_target:
++                outcome, exit_price, exit_idx = "target", target_price, i
++                break
++
++            if adds_used >= dca_max_adds:
++                # 실탄 소진 - 마지막 체결가 기준 최종 하드 스탑만 확인
++                stop_price = last_fill_price * (1 - stop_pct / 100) if bullish else last_fill_price * (1 + stop_pct / 100)
++                hit_stop = lo <= stop_price if bullish else hi >= stop_price
++                if hit_stop:
++                    outcome, exit_price, exit_idx = "stop", stop_price, i
++                    break
++                continue
++
++            add_trigger_price = (
++                last_fill_price * (1 - dca_step_pct / 100) if bullish else last_fill_price * (1 + dca_step_pct / 100)
++            )
++            hit_add = lo <= add_trigger_price if bullish else hi >= add_trigger_price
++            if hit_add:
++                adds_used += 1
++                add_size = dca_multiplier ** adds_used
++                total_units += add_size
++                total_cost += add_trigger_price * add_size
++                last_fill_price = add_trigger_price
++
++        avg_cost = total_cost / total_units
++        pnl_pct = (exit_price - avg_cost) / avg_cost * 100 if bullish else (avg_cost - exit_price) / avg_cost * 100
++
++        rows.append(
++            {
++                "ticker": ev.get("ticker"),
++                "signal_type": ev["signal_type"],
++                "direction": direction,
++                "signal_date": ev["date"],
++                "entry_date": dates[entry_idx],
++                "entry_price": round(entry_price, 2),
++                "adds_used": adds_used,
++                "total_units": round(total_units, 3),
++                "avg_cost": round(avg_cost, 2),
++                "outcome": outcome,
++                "exit_date": dates[exit_idx],
++                "exit_price": round(exit_price, 2),
++                "days_held": exit_idx - entry_idx,
++                "pnl_pct": round(pnl_pct, 2),
++            }
++        )
++
++    return pd.DataFrame(rows)
++
++
++def summarize_dca(dca_df: pd.DataFrame) -> pd.DataFrame:
++    """신호별로 목표/손절 적중 횟수, 승률(시간청산 제외), 평균 추가매수
++    횟수·투입자본배수, 평균 실현손익률(%)을 집계."""
++    rows = []
++    for signal_type, g in dca_df.groupby("signal_type"):
++        decided = g[g["outcome"].isin(["target", "stop"])]
++        n_decided = len(decided)
++        n_target = int((decided["outcome"] == "target").sum())
++        n_stop = int((decided["outcome"] == "stop").sum())
++        n_time = int((g["outcome"] == "time_exit").sum())
++        rows.append(
++            {
++                "signal_type": signal_type,
++                "count": len(g),
++                "target_hit": n_target,
++                "stop_hit": n_stop,
++                "time_exit": n_time,
++                "win_rate_excl_timeexit(%)": round(n_target / n_decided * 100, 1) if n_decided else None,
++                "avg_adds_used": round(g["adds_used"].mean(), 2),
++                "avg_total_units": round(g["total_units"].mean(), 2),
++                "avg_days_held": round(g["days_held"].mean(), 1),
++                "avg_pnl(%)": round(g["pnl_pct"].mean(), 3),
++            }
++        )
++    return pd.DataFrame(rows).sort_values("count", ascending=False)
++
++
+ def build_tpsl_telegram_summary(
+     tpsl_summary: pd.DataFrame, stop_pct: float, rr_ratio: float, max_hold: int, timeframe: str = "daily"
+ ) -> str:
+@@ -517,6 +696,35 @@
+     return "\n".join(lines)
+ 
+ 
++def build_dca_telegram_summary(
++    dca_summary: pd.DataFrame, stop_pct: float, rr_ratio: float, dca_step_pct: float,
++    dca_max_adds: int, dca_multiplier: float, max_hold: int, timeframe: str = "daily",
++) -> str:
++    unit = "봉" if timeframe == "4h" else "거래일"
++    tf_label = "4시간봉" if timeframe == "4h" else "일봉"
++    lines = [
++        f"🌊 [물타기 시뮬 · {tf_label}] {dca_step_pct:g}%마다 최대 {dca_max_adds}회 추가매수(배수 {dca_multiplier:g}) "
++        f"· 실탄 소진 후 최종손절 -{stop_pct:g}% · 목표는 그때그때 평단 기준 +{stop_pct * rr_ratio:g}%(1:{rr_ratio:g}) "
++        f"· 최대보유 {max_hold}{unit}",
++        "",
++    ]
++    for _, row in dca_summary.iterrows():
++        win = row["win_rate_excl_timeexit(%)"]
++        win_str = f"{win:.0f}%" if pd.notna(win) else "N/A"
++        lines.append(
++            f"· {row['signal_type']}: {int(row['count'])}건 | 목표{int(row['target_hit'])}·손절{int(row['stop_hit'])}"
++            f"·시간청산{int(row['time_exit'])} | 승률(결판난 거래 기준) {win_str} | 평균손익 {row['avg_pnl(%)']:+.2f}% "
++            f"| 평균 추가매수 {row['avg_adds_used']:.1f}회(투입자본 평균 {row['avg_total_units']:.1f}배) "
++            f"| 평균보유 {row['avg_days_held']:.1f}{unit}"
++        )
++    lines.append("")
++    lines.append(
++        "(같은 조건 '물타기 안 함' 버전은 바로 위 🎯 [손익비 시뮬] 메시지 참고 - 승률/평균손익을 나란히 비교해볼 것. "
++        "투입자본 평균이 1보다 훨씬 크면, 그만큼 실제로 더 많은 돈을 걸어야 저 승률이 나온다는 뜻)"
++    )
++    return "\n".join(lines)
++
++
+ def _horizon_label(h: int, timeframe: str = "daily") -> str:
+     labels = HORIZON_LABELS_4H if timeframe == "4h" else HORIZON_LABELS
+     unit = "봉" if timeframe == "4h" else "거래일"
+@@ -582,6 +790,7 @@
+ 
+     all_events = []
+     all_tpsl = []
++    all_dca = []
+     skipped = 0
+     for ticker in tickers:
+         df = get_df(ticker)
+@@ -601,6 +810,14 @@
+         if not tpsl.empty:
+             all_tpsl.append(tpsl)
+ 
++        if args.dca_max_adds > 0:
++            dca = simulate_dca(
++                events, df, args.stop_pct, args.rr, args.dca_step_pct,
++                args.dca_max_adds, args.dca_multiplier, args.max_hold, args.entry_lag,
++            )
++            if not dca.empty:
++                all_dca.append(dca)
++
+     if skipped:
+         print(f"(데이터 부족/조회 실패로 {skipped}개 종목 제외)")
+ 
+@@ -666,6 +883,30 @@
+     else:
+         print("\n(방향성 있는 신호(매수/매도 관점) 이벤트가 없어서 손익비 시뮬레이션 결과 없음)")
+ 
++    dca_summary = pd.DataFrame()
++    if args.dca_max_adds > 0:
++        if all_dca:
++            dca_df = pd.concat(all_dca, ignore_index=True)
++            dca_events_path = f"backtest_dca_events{suffix}.csv"
++            dca_df.to_csv(dca_events_path, index=False, encoding="utf-8-sig")
++            dca_summary = summarize_dca(dca_df)
++            dca_summary_path = f"backtest_dca_summary{suffix}.csv"
++            dca_summary.to_csv(dca_summary_path, index=False, encoding="utf-8-sig")
++
++            print(
++                f"\n=== 물타기 시뮬레이션 [{'4시간봉' if args.timeframe == '4h' else '일봉'}] "
++                f"({args.dca_step_pct:g}%마다 최대 {args.dca_max_adds}회 추가매수, 배수 {args.dca_multiplier:g} · "
++                f"실탄 소진 후 최종손절 -{args.stop_pct:g}% · 목표는 그때그때 평단 기준 +{args.stop_pct * args.rr:g}%) ==="
++            )
++            print(dca_summary.to_string(index=False))
++            print(
++                "\n(avg_pnl(%)은 물타기까지 반영한 평단가 기준 실현 손익률 평균 - 바로 위 손익비 시뮬레이션의\n"
++                " expectancy(R)이랑 나란히 비교해볼 것 · avg_total_units가 1보다 훨씬 크면 그만큼 더 많은\n"
++                " 자본을 실제로 걸어야 저 승률/손익이 나온다는 뜻이라, 승률만 보고 좋다고 판단하면 안 됨)"
++            )
++        else:
++            print("\n(물타기 시뮬레이션 대상 거래가 없습니다)")
++
+     try:
+         import matplotlib
+ 
+@@ -715,6 +956,12 @@
+                 tpsl_summary, args.stop_pct, args.rr, args.max_hold, args.timeframe
+             )
+             send_telegram(tpsl_msg)
++        if not dca_summary.empty:
++            dca_msg = build_dca_telegram_summary(
++                dca_summary, args.stop_pct, args.rr, args.dca_step_pct,
++                args.dca_max_adds, args.dca_multiplier, args.max_hold, args.timeframe,
++            )
++            send_telegram(dca_msg)
+         print("\nTelegram으로 요약 전송함 (안 오면 config.py의 토큰/chat_id 확인, 또는 로컬에서 직접 값 채워서 테스트)")
+ 
+ 

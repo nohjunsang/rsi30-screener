@@ -5,10 +5,14 @@ SMA터치/일목터치/다이버전스) 모든 종목을 요약해서 알려주�
 
 전날 밤 EOD Signal Report가 이미 계산해둔 daily_state.json을 새로
 다시 계산하는 게 아니라, 어제 종가 기준 daily 데이터를 다시 한 번
-가볍게 훑어서(가격 자체는 어차피 장 시작 전이라 안 바뀌어 있음) 지금
-조건을 만족하는 종목을 전부 정리함 - "새로 생긴 신호"만 걸러서 보여주는
-평소 알림과 달리, 오늘 하루 참고할 수 있게 "지금 걸려있는 것 전체"를
-한 번에 보여주는 용도.
+가볍게 훑어서(RSI/SMA/일목 신호 계산 자체는 전날 정규장 종가 기준
+그대로임) 지금 조건을 만족하는 종목을 전부 정리함 - "새로 생긴 신호"만
+걸러서 보여주는 평소 알림과 달리, 오늘 하루 참고할 수 있게 "지금
+걸려있는 것 전체"를 한 번에 보여주는 용도.
+
+각 종목 블록에는 🌙 프리마켓 줄로 "지금 시점" 실시간 시세와 전날
+종가 대비 변동률도 같이 붙음(download_latest_quote, 1분봉+prepost=True) -
+조회 실패 시엔 조용히 전날 종가만 표시됨.
 
 하루 한 번만 보내지도록 날짜 기준으로 중복 방지함 (premarket_sent.json).
 
@@ -23,17 +27,20 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from data import get_scan_universe, download_daily_data, extract_ticker_df
+from data import get_scan_universe, download_daily_data, extract_ticker_df, download_latest_quote
 from engine import scan_current_snapshot
 from formatting import format_alerts
 from notifier import send_telegram
 
 NY_TZ = ZoneInfo("America/New_York")
 
-# 장 시작(09:30 ET) 20분 전 = 09:10 ET. cron 오차/재실행 감안해서
-# 09:00~09:20 사이 아무 때나 실행되면 "그날의 리마인더"로 인정함.
+# 장 시작(09:30 ET) 20분 전 = 09:10 ET가 목표 시각이지만, GitHub Actions
+# 예약 실행이 몇 시간씩 늦게 트리거되는 경우가 실제로 있어서(EOD에서
+# 2026-08-04에 마감+1시간41분 지연 사례 확인됨) 09:00~12:00 사이 아무
+# 때나 실행되면 "그날의 리마인더"로 넉넉하게 인정함. 중복 전송은
+# premarket_sent.json(하루 1번 마커)이 막아주므로 넓게 잡아도 스팸 없음.
 WINDOW_START = (9, 0)
-WINDOW_END = (9, 20)
+WINDOW_END = (12, 0)
 
 SENT_MARKER_FILE = Path(__file__).parent / "premarket_sent.json"
 
@@ -98,10 +105,22 @@ def main():
         tickers, get_df, cross_state_filename="h4_state.json", cross_label="4H"
     )
 
+    if signals:
+        involved = sorted({s["ticker"] for s in signals})
+        quotes = download_latest_quote(involved)
+        if not quotes:
+            print("[premarket_digest] 프리마켓 실시간 시세 조회 실패 - 전날 종가만 표시합니다.")
+        for s in signals:
+            q = quotes.get(s["ticker"])
+            if q and s.get("close"):
+                s["live_price"] = q["price"]
+                s["live_change_pct"] = round((q["price"] - s["close"]) / s["close"] * 100, 2)
+                s["live_label"] = "프리마켓"
+
     title_prefix = "🧪 [테스트] " if args.test else ""
     title = f"{title_prefix}🔔 장 시작 20분 전 리마인더 ({today_str})"
-    as_of = "전날 미국 정규장 종가 기준 스냅샷 (오늘 프리마켓 가격변동 미반영)"
-    footer = "전날 종가 기준 · 지금 조건을 만족 중인 종목 전체 요약 (신규 여부와 무관)"
+    as_of = "RSI/SMA/일목 신호는 전날 정규장 종가 기준 · 🌙 프리마켓 줄의 가격은 지금 시점 실시간 시세"
+    footer = "전날 종가 기준 신호 + 🌙 프리마켓 줄이 있는 종목은 가격만 지금 시점 실시간 반영 (신규 여부와 무관)"
 
     if not signals:
         msg = f"{title}\n🕐 {as_of}\n\n지금 조건을 만족하는 종목이 하나도 없습니다."

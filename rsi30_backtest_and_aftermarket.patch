@@ -1,0 +1,490 @@
+diff --git a/backtest.py b/backtest.py
+index eb73267..8b95db8 100644
+--- a/backtest.py
++++ b/backtest.py
+@@ -9,23 +9,44 @@ backtest.py
+ 빈도가 가장 잦아서 실제 알림에서는 비활성화했지만(터치는 계속 사용),
+ 비교 참고용으로 백테스트 통계에는 계속 포함되어 있음.
+ 
+-"신호가 발생한 시점" 각각에 대해, 그 이후 N거래일 뒤 가격이 얼마나
+-움직였는지(수익률, 승률)를 집계함. config.py에 있는 것과 정확히 같은
+-임계값(RSI 30/70, SMA ±1%, 일목 9/26/52, 다이버전스 룩백, SMA50/200
+-교차, 볼린저밴드 20/2 등)을 그대로 재사용함.
++이 파일은 두 가지 방식으로 신호를 검증함:
++
++  1) 고정 기간 수익률 (기존): "신호가 발생한 시점" 각각에 대해, 그
++     이후 N거래일 뒤 가격이 얼마나 움직였는지(수익률, 승률)를 집계함.
++     -> backtest_events.csv / backtest_summary.csv
++
++  2) 손익비(목표가/손절가) 시뮬레이션 (신규): formatting.py의
++     SIGNAL_DIRECTION에 매수/매도 방향이 정의된 신호(RSI 과매도/과매수
++     진입, RSI 다이버전스, 골든/데드크로스, 볼린저 스퀴즈 해제)만 대상으로
++     "다음날 시가에 진입해서, 손절 -stop_pct% / 목표 +stop_pct*rr%를
++     실제로 걸어뒀다면 어느 쪽이 먼저 닿았을지"를 하루하루 시뮬레이션함.
++     같은 날 목표/손절이 둘 다 닿으면 보수적으로 손절이 먼저 체결된 것으로
++     처리하고, max_hold거래일 안에 아무것도 안 닿으면 그날 종가로 청산함.
++     -> backtest_tpsl_events.csv / backtest_tpsl_summary.csv
++     (방향성 없는 SMA/일목 터치, 볼린저 스퀴즈 진입 자체는 매수/매도 관점이
++     없어서 이 시뮬레이션 대상에서 자동 제외됨 - 라이브 알림에서 "매수/매도
++     관점"이 붙는 신호와 정확히 같은 기준을 재사용함)
++
++config.py에 있는 것과 정확히 같은 임계값(RSI 30/70, SMA ±1%, 일목
++9/26/52, 다이버전스 룩백, SMA50/200 교차, 볼린저밴드 20/2 등)을 그대로
++재사용함.
+ 
+ 로컬에서 실행 (샌드박스는 금융 API 접근이 막혀있어서 여기선 못 돌림):
+   pip install -r requirements.txt
+   python refresh_cache.py          # 캐시된 유니버스 쓰려면 먼저 필요 (선택)
+-  python backtest.py                # 기본: 캐시된 유니버스, 최근 5년
++  python backtest.py                # 기본: 캐시된 유니버스, 최근 5년, 손절3%/손익비1:2/최대20거래일
+   python backtest.py --tickers AAPL,MSFT,TSLA,SOXL   # 특정 종목만 빠르게
+   python backtest.py --years 3 --horizons 5,10,20     # 기간/평가시점 조절
++  python backtest.py --stop-pct 4 --rr 2.5 --max-hold 15   # 손절4%/손익비1:2.5/최대15거래일로 시뮬레이션
++  python backtest.py --entry-lag 0   # 신호 당일 종가 진입으로(비현실적 참고용) 비교하고 싶을 때
+   python backtest.py --telegram                        # 결과 요약을 Telegram으로도 전송
+ 
+ 결과물:
+-  backtest_events.csv   : 발생한 모든 신호 개별 이벤트 + 기간별 수익률
+-  backtest_summary.csv  : 신호별 집계 (발생횟수/평균수익률/승률)
+-  backtest_summary.png  : 신호별 승률 막대그래프 (matplotlib 있으면)
++  backtest_events.csv        : 발생한 모든 신호 개별 이벤트 + 기간별 수익률
++  backtest_summary.csv       : 신호별 집계 (발생횟수/평균수익률/승률)
++  backtest_summary.png       : 신호별 승률 막대그래프 (matplotlib 있으면)
++  backtest_tpsl_events.csv   : 방향성 신호별 손익비 시뮬레이션 개별 거래 기록
++  backtest_tpsl_summary.csv  : 신호별 목표/손절 적중률 + 기대값(R) 집계
+ """
+ 
+ import argparse
+@@ -56,6 +77,7 @@ from config import (
+     BB_SQUEEZE_LOOKBACK,
+ )
+ from indicators import wilder_rsi, detect_divergence, volume_spike_ratio
++from formatting import SIGNAL_DIRECTION
+ 
+ 
+ def parse_args():
+@@ -78,6 +100,31 @@ def parse_args():
+         action="store_true",
+         help="백테스트 요약 결과를 Telegram으로도 전송 (config.py에 토큰/chat_id 설정되어 있어야 함)",
+     )
++    p.add_argument(
++        "--stop-pct",
++        type=float,
++        default=3.0,
++        help="손익비 시뮬레이션의 손절 폭 %% (기본 3.0). 목표폭은 stop-pct * rr로 자동 계산됨",
++    )
++    p.add_argument(
++        "--rr",
++        type=float,
++        default=2.0,
++        help="손익비 목표/손절 비율 (기본 2.0 = 손절1:목표2). 예: stop-pct=3, rr=2 -> 손절-3%%/목표+6%%",
++    )
++    p.add_argument(
++        "--max-hold",
++        type=int,
++        default=20,
++        help="목표/손절 시뮬레이션에서 최대 보유 거래일 수 (기본 20). 이 안에 안 닿으면 종가 청산",
++    )
++    p.add_argument(
++        "--entry-lag",
++        type=int,
++        default=1,
++        help="신호 발생일로부터 며칠(거래일) 뒤 시가에 진입할지 (기본 1 = 다음날 시가. "
++        "신호는 종가 확정 후에야 알 수 있으므로 당일 종가 진입은 비현실적)",
++    )
+     return p.parse_args()
+ 
+ 
+@@ -261,6 +308,141 @@ def add_forward_returns(events: pd.DataFrame, sig: pd.DataFrame, horizons: list)
+ HORIZON_LABELS = {5: "1주", 10: "2주", 15: "3주", 20: "1개월", 40: "2개월", 60: "3개월"}
+ 
+ 
++def simulate_tp_sl(
++    events: pd.DataFrame, df: pd.DataFrame, stop_pct: float, rr_ratio: float, max_hold: int, entry_lag: int = 1
++) -> pd.DataFrame:
++    """방향성 있는 신호(formatting.SIGNAL_DIRECTION에 정의된 매수/매도 관점
++    신호)만 대상으로, 실제로 목표가/손절가를 걸어뒀다면 어떻게 됐을지
++    거래일 단위로 시뮬레이션.
++
++    - 진입: 신호 발생일 + entry_lag거래일 뒤 시가 (기본 1 = 다음날 시가)
++    - 손절폭 stop_pct(%) / 목표폭 stop_pct*rr_ratio(%)
++    - 매일 High/Low를 확인해서 목표/손절 중 먼저 닿은 쪽으로 청산.
++      같은 날 둘 다 닿으면 보수적으로 손절이 먼저 체결된 것으로 처리
++    - max_hold거래일 안에 아무것도 안 닿으면 그날 종가로 청산(time_exit)
++    - r_multiple: 손절폭을 1R로 뒀을 때 실제 손익이 몇 R이었는지
++      (target 적중 시 +rr_ratio, stop 적중 시 -1, time_exit은 그 사이 값)
++    """
++    if events.empty:
++        return pd.DataFrame()
++
++    dates = list(df.index)
++    date_to_idx = {d: i for i, d in enumerate(dates)}
++    opens, highs, lows, closes = df["Open"], df["High"], df["Low"], df["Close"]
++
++    rows = []
++    for _, ev in events.iterrows():
++        direction = SIGNAL_DIRECTION.get(ev["signal_type"])
++        if not direction:
++            continue  # SMA/일목 터치, 볼린저 스퀴즈 진입 등 방향성 없는 신호는 대상 제외
++        sig_idx = date_to_idx.get(ev["date"])
++        if sig_idx is None:
++            continue
++        entry_idx = sig_idx + entry_lag
++        if entry_idx >= len(dates):
++            continue
++        entry_price = opens.iloc[entry_idx]
++        if pd.isna(entry_price) or entry_price <= 0:
++            continue
++
++        if direction == "bullish":
++            stop_price = entry_price * (1 - stop_pct / 100)
++            target_price = entry_price * (1 + stop_pct * rr_ratio / 100)
++        else:
++            stop_price = entry_price * (1 + stop_pct / 100)
++            target_price = entry_price * (1 - stop_pct * rr_ratio / 100)
++
++        outcome = "time_exit"
++        exit_idx = min(entry_idx + max_hold, len(dates) - 1)
++        exit_price = closes.iloc[exit_idx]
++
++        for i in range(entry_idx, min(entry_idx + max_hold, len(dates) - 1) + 1):
++            hi, lo = highs.iloc[i], lows.iloc[i]
++            if direction == "bullish":
++                hit_stop = lo <= stop_price
++                hit_target = hi >= target_price
++            else:
++                hit_stop = hi >= stop_price
++                hit_target = lo <= target_price
++            if hit_stop:  # 같은 날 목표도 같이 닿았어도 보수적으로 손절 우선 처리
++                outcome, exit_price, exit_idx = "stop", stop_price, i
++                break
++            if hit_target:
++                outcome, exit_price, exit_idx = "target", target_price, i
++                break
++
++        r_multiple = (
++            (exit_price - entry_price) / (entry_price - stop_price)
++            if direction == "bullish"
++            else (entry_price - exit_price) / (stop_price - entry_price)
++        )
++        rows.append(
++            {
++                "ticker": ev.get("ticker"),
++                "signal_type": ev["signal_type"],
++                "direction": direction,
++                "signal_date": ev["date"],
++                "entry_date": dates[entry_idx],
++                "entry_price": round(entry_price, 2),
++                "stop_price": round(stop_price, 2),
++                "target_price": round(target_price, 2),
++                "outcome": outcome,
++                "exit_date": dates[exit_idx],
++                "exit_price": round(exit_price, 2),
++                "days_held": exit_idx - entry_idx,
++                "r_multiple": round(r_multiple, 2),
++            }
++        )
++
++    return pd.DataFrame(rows)
++
++
++def summarize_tp_sl(tpsl_df: pd.DataFrame) -> pd.DataFrame:
++    """신호별로 목표/손절 적중 횟수, 승률(시간청산 제외), 평균 보유일,
++    기대값(전체 거래 평균 R)을 집계."""
++    rows = []
++    for signal_type, g in tpsl_df.groupby("signal_type"):
++        decided = g[g["outcome"].isin(["target", "stop"])]
++        n_decided = len(decided)
++        n_target = int((decided["outcome"] == "target").sum())
++        n_stop = int((decided["outcome"] == "stop").sum())
++        n_time = int((g["outcome"] == "time_exit").sum())
++        rows.append(
++            {
++                "signal_type": signal_type,
++                "count": len(g),
++                "target_hit": n_target,
++                "stop_hit": n_stop,
++                "time_exit": n_time,
++                "win_rate_excl_timeexit(%)": round(n_target / n_decided * 100, 1) if n_decided else None,
++                "avg_days_held": round(g["days_held"].mean(), 1),
++                "expectancy(R)": round(g["r_multiple"].mean(), 3),
++            }
++        )
++    return pd.DataFrame(rows).sort_values("count", ascending=False)
++
++
++def build_tpsl_telegram_summary(
++    tpsl_summary: pd.DataFrame, stop_pct: float, rr_ratio: float, max_hold: int
++) -> str:
++    target_pct = stop_pct * rr_ratio
++    lines = [
++        f"🎯 [손익비 시뮬] 손절 -{stop_pct:g}% / 목표 +{target_pct:g}% (1:{rr_ratio:g}) · 최대보유 {max_hold}거래일",
++        "",
++    ]
++    for _, row in tpsl_summary.iterrows():
++        win = row["win_rate_excl_timeexit(%)"]
++        win_str = f"{win:.0f}%" if pd.notna(win) else "N/A"
++        lines.append(
++            f"· {row['signal_type']}: {int(row['count'])}건 | 목표{int(row['target_hit'])}·손절{int(row['stop_hit'])}"
++            f"·시간청산{int(row['time_exit'])} | 승률(결판난 거래 기준) {win_str} | 기대값 {row['expectancy(R)']:+.2f}R"
++            f" | 평균보유 {row['avg_days_held']:.1f}일"
++        )
++    lines.append("")
++    lines.append("(expectancy(R)이 양수여야 이 신호를 이 손익비대로 장기 반복했을 때 기대이익이 남는다는 뜻)")
++    return "\n".join(lines)
++
++
+ def _horizon_label(h: int) -> str:
+     friendly = HORIZON_LABELS.get(h)
+     return f"{h}거래일({friendly})" if friendly else f"{h}거래일"
+@@ -325,6 +507,7 @@ def main():
+     )
+ 
+     all_events = []
++    all_tpsl = []
+     skipped = 0
+     for ticker in tickers:
+         try:
+@@ -346,6 +529,10 @@ def main():
+         events.insert(0, "ticker", ticker)
+         all_events.append(events)
+ 
++        tpsl = simulate_tp_sl(events, df, args.stop_pct, args.rr, args.max_hold, args.entry_lag)
++        if not tpsl.empty:
++            all_tpsl.append(tpsl)
++
+     if skipped:
+         print(f"(데이터 부족/조회 실패로 {skipped}개 종목 제외)")
+ 
+@@ -381,6 +568,29 @@ def main():
+         " 케이스일 수 있으니, 신호 성격에 맞춰 방향 감안해서 해석할 것.)"
+     )
+ 
++    tpsl_summary = pd.DataFrame()
++    if all_tpsl:
++        tpsl_df = pd.concat(all_tpsl, ignore_index=True)
++        tpsl_df.to_csv("backtest_tpsl_events.csv", index=False, encoding="utf-8-sig")
++        tpsl_summary = summarize_tp_sl(tpsl_df)
++        tpsl_summary.to_csv("backtest_tpsl_summary.csv", index=False, encoding="utf-8-sig")
++
++        target_pct = args.stop_pct * args.rr
++        print(
++            f"\n=== 손익비 시뮬레이션 (손절 -{args.stop_pct:g}% / 목표 +{target_pct:g}% "
++            f"= 1:{args.rr:g} · 최대보유 {args.max_hold}거래일 · 진입 {args.entry_lag}거래일 후 시가) ==="
++        )
++        print(tpsl_summary.to_string(index=False))
++        print(
++            "\n(target_hit=목표가 먼저 도달, stop_hit=손절가 먼저 도달, time_exit=둘 다 못 닿아서 종가 청산\n"
++            " · win_rate는 time_exit 제외 target/stop 결판난 거래만 기준 · expectancy(R)은 시간청산 포함\n"
++            " 전체 거래의 평균 손익배수(1R=손절폭) - 이게 양수여야 이 손익비대로 장기 반복했을 때\n"
++            " 기대이익이 남는다는 뜻. 방향성 없는 SMA/일목 터치, 볼린저 스퀴즈 진입은 매수/매도 관점이\n"
++            " 없어서 이 표에서 자동 제외됨)"
++        )
++    else:
++        print("\n(방향성 있는 신호(매수/매도 관점) 이벤트가 없어서 손익비 시뮬레이션 결과 없음)")
++
+     try:
+         import matplotlib
+ 
+@@ -424,6 +634,9 @@ def main():
+ 
+         msg = build_telegram_summary(summary_df, events_df, tickers, args.years, horizons)
+         send_telegram(msg)
++        if not tpsl_summary.empty:
++            tpsl_msg = build_tpsl_telegram_summary(tpsl_summary, args.stop_pct, args.rr, args.max_hold)
++            send_telegram(tpsl_msg)
+         print("\nTelegram으로 요약 전송함 (안 오면 config.py의 토큰/chat_id 확인, 또는 로컬에서 직접 값 채워서 테스트)")
+ 
+ 
+diff --git a/data.py b/data.py
+index d8a389b..6ebf856 100644
+--- a/data.py
++++ b/data.py
+@@ -106,3 +106,43 @@ def extract_ticker_df(data: pd.DataFrame, ticker: str):
+         return df
+     except (KeyError, Exception):
+         return None
++
++
++def download_latest_quote(tickers: list[str]) -> dict[str, dict]:
++    """프리마켓/애프터마켓 포함 가장 최근 체결가를 1분봉으로 조회
++    (RSI/SMA 등 신호 계산에는 안 쓰고, 리마인더 메시지에 "지금 가격"만
++    보여주는 용도 - 정규장 종가 기준 신호 계산 자체는 안 바뀜).
++
++    반환: {ticker: {"price": float, "as_of": Timestamp}}
++    조회 실패했거나 데이터가 없는 종목은 결과에서 빠짐(에러를 던지지 않음 -
++    실패해도 호출부가 "정규장 종가만 표시"로 조용히 폴백할 수 있게).
++    """
++    if not tickers:
++        return {}
++    try:
++        data = yf.download(
++            tickers,
++            period="2d",
++            interval="1m",
++            group_by="ticker",
++            auto_adjust=True,
++            threads=True,
++            progress=False,
++            prepost=True,
++        )
++    except Exception:
++        return {}
++
++    quotes = {}
++    for ticker in tickers:
++        df = extract_ticker_df(data, ticker)
++        if df is None or df.empty:
++            continue
++        last = df.dropna(subset=["Close"]).tail(1)
++        if last.empty:
++            continue
++        quotes[ticker] = {
++            "price": round(float(last["Close"].iloc[0]), 2),
++            "as_of": last.index[0],
++        }
++    return quotes
+diff --git a/formatting.py b/formatting.py
+index 649018a..89db721 100644
+--- a/formatting.py
++++ b/formatting.py
+@@ -198,6 +198,15 @@ def _format_ticker_block(ticker: str, ticker_alerts: list, quality=None) -> list
+         f"<b>{html.escape(ticker)}</b>  ${first['close']}  {change_emoji}{change_str}  ·  시총 {cap_str}"
+     ]
+ 
++    live_pct = first.get("live_change_pct")
++    if live_pct is not None:
++        live_price = first.get("live_price")
++        live_emoji = _change_emoji(live_pct)
++        live_label = first.get("live_label", "실시간")
++        lines.append(
++            f"  🌙 {live_label} {live_emoji}{live_pct:+.2f}% (현재 ${live_price} · 정규장 종가 대비)"
++        )
++
+     if quality:
+         score, direction, reasons = quality
+         dir_kr = "매수 관점" if direction == "bullish" else "매도/청산 관점"
+diff --git a/kr_open_digest.py b/kr_open_digest.py
+index 92675da..f43083e 100644
+--- a/kr_open_digest.py
++++ b/kr_open_digest.py
+@@ -10,12 +10,15 @@ premarket_digest.py(미국 장 시작 전용)와 신호 계산 로직은 완전
+ 실행 시각 기준만 다름 - 이쪽은 한국시간(KST) 고정이라 서머타임 영향이
+ 아예 없음 (한국은 서머타임 안 씀).
+ 
+-⚠️ 중요한 한계: 이 리마인더는 미국 정규장 마감(16:00 ET) 이후의
+-애프터마켓(연장거래) 가격 변동을 반영하지 못함. RSI/SMA/일목 신호는
+-전부 "정규장 종가" 기준으로 계산되기 때문에, 애프터마켓에서 가격이
+-움직여도 그 계산 자체는 안 바뀜. 즉 EOD Signal Report와 사실상 같은
+-내용을 한 번 더 보여주는 것 - "새 신호 감지"가 아니라 "한 번 더 상기
+-+ 혹시 EOD 리포트를 놓쳤을 때의 안전망" 용도로 이해할 것.
++⚠️ 신호 계산 자체의 한계: RSI/SMA/일목 등 신호는 여전히 미국 정규장
++마감(16:00 ET) 종가 기준으로 계산됨(EOD Signal Report와 동일) - 애프터마켓
++가격이 움직여도 신호 자체가 다시 계산되지는 않음.
++
++다만 각 종목 블록에 🌙 애프터마켓 줄로 "지금 시점" 연장거래 실시간
++시세와 정규장 종가 대비 변동률을 별도로 붙여서 보여줌(download_latest_quote,
++1분봉+prepost=True) - 신호는 그대로 참고하되, 지금 가격이 얼마나
++움직였는지는 한눈에 확인 가능. 시세 조회 자체가 실패하면(네트워크 등)
++그 종목은 조용히 정규장 종가만 표시됨.
+ 
+ 사용법:
+   python kr_open_digest.py          # 정상 실행 (시간대+중복 체크 다 함)
+@@ -28,7 +31,7 @@ from datetime import datetime
+ from pathlib import Path
+ from zoneinfo import ZoneInfo
+ 
+-from data import get_scan_universe, download_daily_data, extract_ticker_df
++from data import get_scan_universe, download_daily_data, extract_ticker_df, download_latest_quote
+ from engine import scan_current_snapshot
+ from formatting import format_alerts
+ from notifier import send_telegram
+@@ -103,12 +106,28 @@ def main():
+         tickers, get_df, cross_state_filename="h4_state.json", cross_label="4H"
+     )
+ 
++    if signals:
++        involved = sorted({s["ticker"] for s in signals})
++        quotes = download_latest_quote(involved)
++        if not quotes:
++            print("[kr_open_digest] 애프터마켓 실시간 시세 조회 실패 - 정규장 종가만 표시합니다.")
++        for s in signals:
++            q = quotes.get(s["ticker"])
++            if q and s.get("close"):
++                s["live_price"] = q["price"]
++                s["live_change_pct"] = round((q["price"] - s["close"]) / s["close"] * 100, 2)
++                s["live_label"] = "애프터마켓"
++
+     title_prefix = "🧪 [테스트] " if args.test else ""
+     title = f"{title_prefix}🇰🇷 한국장 시작 20분 전 리마인더 ({today_str})"
+-    as_of = "미국 정규장 마감(전날 16:00 ET) 종가 기준 · 애프터마켓 가격변동 미반영"
++    as_of = (
++        "RSI/SMA/일목 신호는 미국 정규장 마감(전날 16:00 ET) 종가 기준 · "
++        "🌙 애프터마켓 줄의 가격은 지금 시점 연장거래 실시간 시세"
++    )
+     footer = (
+-        "미국 정규장 마감(전날 종가) 기준 · 애프터마켓 가격변동은 미반영 "
+-        "(EOD Signal Report와 동일 내용, 재확인/안전망 용도)"
++        "신호 계산 자체는 정규장 종가 기준 그대로(EOD Signal Report와 동일) · "
++        "🌙 애프터마켓 줄이 있는 종목은 그 가격만 지금 시점 실시간 반영됨 "
++        "(시세 조회 실패 시 정규장 종가만 표시)"
+     )
+ 
+     if not signals:
+diff --git a/premarket_digest.py b/premarket_digest.py
+index d81a20d..b62368d 100644
+--- a/premarket_digest.py
++++ b/premarket_digest.py
+@@ -5,10 +5,14 @@ SMA터치/일목터치/다이버전스) 모든 종목을 요약해서 알려주
+ 
+ 전날 밤 EOD Signal Report가 이미 계산해둔 daily_state.json을 새로
+ 다시 계산하는 게 아니라, 어제 종가 기준 daily 데이터를 다시 한 번
+-가볍게 훑어서(가격 자체는 어차피 장 시작 전이라 안 바뀌어 있음) 지금
+-조건을 만족하는 종목을 전부 정리함 - "새로 생긴 신호"만 걸러서 보여주는
+-평소 알림과 달리, 오늘 하루 참고할 수 있게 "지금 걸려있는 것 전체"를
+-한 번에 보여주는 용도.
++가볍게 훑어서(RSI/SMA/일목 신호 계산 자체는 전날 정규장 종가 기준
++그대로임) 지금 조건을 만족하는 종목을 전부 정리함 - "새로 생긴 신호"만
++걸러서 보여주는 평소 알림과 달리, 오늘 하루 참고할 수 있게 "지금
++걸려있는 것 전체"를 한 번에 보여주는 용도.
++
++각 종목 블록에는 🌙 프리마켓 줄로 "지금 시점" 실시간 시세와 전날
++종가 대비 변동률도 같이 붙음(download_latest_quote, 1분봉+prepost=True) -
++조회 실패 시엔 조용히 전날 종가만 표시됨.
+ 
+ 하루 한 번만 보내지도록 날짜 기준으로 중복 방지함 (premarket_sent.json).
+ 
+@@ -23,7 +27,7 @@ from datetime import datetime
+ from pathlib import Path
+ from zoneinfo import ZoneInfo
+ 
+-from data import get_scan_universe, download_daily_data, extract_ticker_df
++from data import get_scan_universe, download_daily_data, extract_ticker_df, download_latest_quote
+ from engine import scan_current_snapshot
+ from formatting import format_alerts
+ from notifier import send_telegram
+@@ -98,10 +102,22 @@ def main():
+         tickers, get_df, cross_state_filename="h4_state.json", cross_label="4H"
+     )
+ 
++    if signals:
++        involved = sorted({s["ticker"] for s in signals})
++        quotes = download_latest_quote(involved)
++        if not quotes:
++            print("[premarket_digest] 프리마켓 실시간 시세 조회 실패 - 전날 종가만 표시합니다.")
++        for s in signals:
++            q = quotes.get(s["ticker"])
++            if q and s.get("close"):
++                s["live_price"] = q["price"]
++                s["live_change_pct"] = round((q["price"] - s["close"]) / s["close"] * 100, 2)
++                s["live_label"] = "프리마켓"
++
+     title_prefix = "🧪 [테스트] " if args.test else ""
+     title = f"{title_prefix}🔔 장 시작 20분 전 리마인더 ({today_str})"
+-    as_of = "전날 미국 정규장 종가 기준 스냅샷 (오늘 프리마켓 가격변동 미반영)"
+-    footer = "전날 종가 기준 · 지금 조건을 만족 중인 종목 전체 요약 (신규 여부와 무관)"
++    as_of = "RSI/SMA/일목 신호는 전날 정규장 종가 기준 · 🌙 프리마켓 줄의 가격은 지금 시점 실시간 시세"
++    footer = "전날 종가 기준 신호 + 🌙 프리마켓 줄이 있는 종목은 가격만 지금 시점 실시간 반영 (신규 여부와 무관)"
+ 
+     if not signals:
+         msg = f"{title}\n🕐 {as_of}\n\n지금 조건을 만족하는 종목이 하나도 없습니다."

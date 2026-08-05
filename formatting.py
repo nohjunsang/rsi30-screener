@@ -198,6 +198,15 @@ def _format_ticker_block(ticker: str, ticker_alerts: list, quality=None) -> list
         f"<b>{html.escape(ticker)}</b>  ${first['close']}  {change_emoji}{change_str}  ·  시총 {cap_str}"
     ]
 
+    live_pct = first.get("live_change_pct")
+    if live_pct is not None:
+        live_price = first.get("live_price")
+        live_emoji = _change_emoji(live_pct)
+        live_label = first.get("live_label", "실시간")
+        lines.append(
+            f"  🌙 {live_label} {live_emoji}{live_pct:+.2f}% (현재 ${live_price} · 정규장 종가 대비)"
+        )
+
     if quality:
         score, direction, reasons = quality
         dir_kr = "매수 관점" if direction == "bullish" else "매도/청산 관점"

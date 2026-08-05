@@ -106,3 +106,43 @@ def extract_ticker_df(data: pd.DataFrame, ticker: str):
         return df
     except (KeyError, Exception):
         return None
+
+
+def download_latest_quote(tickers: list[str]) -> dict[str, dict]:
+    """프리마켓/애프터마켓 포함 가장 최근 체결가를 1분봉으로 조회
+    (RSI/SMA 등 신호 계산에는 안 쓰고, 리마인더 메시지에 "지금 가격"만
+    보여주는 용도 - 정규장 종가 기준 신호 계산 자체는 안 바뀜).
+
+    반환: {ticker: {"price": float, "as_of": Timestamp}}
+    조회 실패했거나 데이터가 없는 종목은 결과에서 빠짐(에러를 던지지 않음 -
+    실패해도 호출부가 "정규장 종가만 표시"로 조용히 폴백할 수 있게).
+    """
+    if not tickers:
+        return {}
+    try:
+        data = yf.download(
+            tickers,
+            period="2d",
+            interval="1m",
+            group_by="ticker",
+            auto_adjust=True,
+            threads=True,
+            progress=False,
+            prepost=True,
+        )
+    except Exception:
+        return {}
+
+    quotes = {}
+    for ticker in tickers:
+        df = extract_ticker_df(data, ticker)
+        if df is None or df.empty:
+            continue
+        last = df.dropna(subset=["Close"]).tail(1)
+        if last.empty:
+            continue
+        quotes[ticker] = {
+            "price": round(float(last["Close"].iloc[0]), 2),
+            "as_of": last.index[0],
+        }
+    return quotes

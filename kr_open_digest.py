@@ -10,12 +10,15 @@ premarket_digest.py(미국 장 시작 전용)와 신호 계산 로직은 완전�
 실행 시각 기준만 다름 - 이쪽은 한국시간(KST) 고정이라 서머타임 영향이
 아예 없음 (한국은 서머타임 안 씀).
 
-⚠️ 중요한 한계: 이 리마인더는 미국 정규장 마감(16:00 ET) 이후의
-애프터마켓(연장거래) 가격 변동을 반영하지 못함. RSI/SMA/일목 신호는
-전부 "정규장 종가" 기준으로 계산되기 때문에, 애프터마켓에서 가격이
-움직여도 그 계산 자체는 안 바뀜. 즉 EOD Signal Report와 사실상 같은
-내용을 한 번 더 보여주는 것 - "새 신호 감지"가 아니라 "한 번 더 상기
-+ 혹시 EOD 리포트를 놓쳤을 때의 안전망" 용도로 이해할 것.
+⚠️ 신호 계산 자체의 한계: RSI/SMA/일목 등 신호는 여전히 미국 정규장
+마감(16:00 ET) 종가 기준으로 계산됨(EOD Signal Report와 동일) - 애프터마켓
+가격이 움직여도 신호 자체가 다시 계산되지는 않음.
+
+다만 각 종목 블록에 🌙 애프터마켓 줄로 "지금 시점" 연장거래 실시간
+시세와 정규장 종가 대비 변동률을 별도로 붙여서 보여줌(download_latest_quote,
+1분봉+prepost=True) - 신호는 그대로 참고하되, 지금 가격이 얼마나
+움직였는지는 한눈에 확인 가능. 시세 조회 자체가 실패하면(네트워크 등)
+그 종목은 조용히 정규장 종가만 표시됨.
 
 사용법:
   python kr_open_digest.py          # 정상 실행 (시간대+중복 체크 다 함)
@@ -28,17 +31,20 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from data import get_scan_universe, download_daily_data, extract_ticker_df
+from data import get_scan_universe, download_daily_data, extract_ticker_df, download_latest_quote
 from engine import scan_current_snapshot
 from formatting import format_alerts
 from notifier import send_telegram
 
 KST_TZ = ZoneInfo("Asia/Seoul")
 
-# 한국 장 시작(09:00 KST) 20분 전 = 08:40 KST. cron 오차 감안해서
-# 08:30~08:50 사이 아무 때나 실행되면 "그날의 리마인더"로 인정함.
+# 한국 장 시작(09:00 KST) 20분 전 = 08:40 KST가 목표 시각이지만, GitHub
+# Actions 예약 실행이 몇 시간씩 늦게 트리거되는 경우가 실제로 있어서(EOD에서
+# 2026-08-04에 마감+1시간41분 지연 사례 확인됨) 08:30~11:00 사이 아무
+# 때나 실행되면 "그날의 리마인더"로 넉넉하게 인정함. 중복 전송은
+# kr_open_sent.json(하루 1번 마커)이 막아주므로 넓게 잡아도 스팸 없음.
 WINDOW_START = (8, 30)
-WINDOW_END = (8, 50)
+WINDOW_END = (11, 0)
 
 SENT_MARKER_FILE = Path(__file__).parent / "kr_open_sent.json"
 
@@ -103,12 +109,28 @@ def main():
         tickers, get_df, cross_state_filename="h4_state.json", cross_label="4H"
     )
 
+    if signals:
+        involved = sorted({s["ticker"] for s in signals})
+        quotes = download_latest_quote(involved)
+        if not quotes:
+            print("[kr_open_digest] 애프터마켓 실시간 시세 조회 실패 - 정규장 종가만 표시합니다.")
+        for s in signals:
+            q = quotes.get(s["ticker"])
+            if q and s.get("close"):
+                s["live_price"] = q["price"]
+                s["live_change_pct"] = round((q["price"] - s["close"]) / s["close"] * 100, 2)
+                s["live_label"] = "애프터마켓"
+
     title_prefix = "🧪 [테스트] " if args.test else ""
     title = f"{title_prefix}🇰🇷 한국장 시작 20분 전 리마인더 ({today_str})"
-    as_of = "미국 정규장 마감(전날 16:00 ET) 종가 기준 · 애프터마켓 가격변동 미반영"
+    as_of = (
+        "RSI/SMA/일목 신호는 미국 정규장 마감(전날 16:00 ET) 종가 기준 · "
+        "🌙 애프터마켓 줄의 가격은 지금 시점 연장거래 실시간 시세"
+    )
     footer = (
-        "미국 정규장 마감(전날 종가) 기준 · 애프터마켓 가격변동은 미반영 "
-        "(EOD Signal Report와 동일 내용, 재확인/안전망 용도)"
+        "신호 계산 자체는 정규장 종가 기준 그대로(EOD Signal Report와 동일) · "
+        "🌙 애프터마켓 줄이 있는 종목은 그 가격만 지금 시점 실시간 반영됨 "
+        "(시세 조회 실패 시 정규장 종가만 표시)"
     )
 
     if not signals:
