@@ -101,6 +101,14 @@ SIGNAL_DIRECTION = {
 GOOD_THRESHOLD = 3
 BAD_THRESHOLD = -2
 
+# 골든/데드크로스 "상태"뿐 아니라 SMA/일목구름대 "터치"도 사실 꽤 흔한
+# 이벤트라(허용오차 ±1%, 4시간봉에선 특히 자주 걸림), 이것도 4H쪽에서
+# "확인"됐다고 컨플루언스로 치면 또 대부분이 걸려버림. 그래서 컨플루언스는
+# ALWAYS_NOTABLE_TYPES(RSI 극단치/다이버전스/볼린저 스퀴즈처럼 진짜
+# 선별적인 신호)에 속한 것만 인정하는 화이트리스트 방식으로 바꿈.
+def _meaningful_cross_signals(cross_signals: list) -> list:
+    return [s for s in (cross_signals or []) if s in ALWAYS_NOTABLE_TYPES]
+
 
 def _emoji(signal_type: str) -> str:
     return SIGNAL_EMOJI.get(signal_type, "•")
@@ -123,7 +131,7 @@ def _is_notable(ticker_alerts: list) -> bool:
     a = ticker_alerts[0]
     if a["signal_type"] in ALWAYS_NOTABLE_TYPES:
         return True
-    if a.get("cross_timeframe_signals"):
+    if _meaningful_cross_signals(a.get("cross_timeframe_signals")):
         return True
     if a.get("volume_spike"):
         return True
@@ -174,7 +182,7 @@ def _compute_quality(ticker_alerts: list):
         score += overlap_bonus
         reasons.append(f"신호 {overlap_count}개 동시 겹침")
 
-    if ticker_alerts[0].get("cross_timeframe_signals"):
+    if _meaningful_cross_signals(ticker_alerts[0].get("cross_timeframe_signals")):
         score += 2
         reasons.append("일봉+4H 동시 확인(컨플루언스)")
 

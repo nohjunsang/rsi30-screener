@@ -6,7 +6,8 @@ alerts.py
 실제 신호 계산/전이감지 로직은 engine.py에 공용으로 있음.
 """
 
-from data import get_scan_universe, download_daily_data, extract_ticker_df
+from data import get_scan_universe
+from toss_data import download_daily_data, extract_ticker_df
 from engine import scan
 from state import StateStore
 

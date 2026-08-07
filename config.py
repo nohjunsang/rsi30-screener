@@ -82,3 +82,9 @@ BB_SQUEEZE_LOOKBACK = 120
 # GitHub Actions에서는 Repository Secrets로 주입되는 환경변수를 그대로 사용.
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+
+# ---- 토스증권 Open API (일봉 3개 워크플로우: EOD/프리마켓/한국장 오픈) ----
+# WTS 로그인 후 설정 > Open API 메뉴에서 발급. 4시간봉 모니터는 토스가
+# 1분봉/일봉만 지원해서 아직 야후파이낸스 그대로 씀.
+TOSS_CLIENT_ID = os.environ.get("TOSS_CLIENT_ID", "")
+TOSS_CLIENT_SECRET = os.environ.get("TOSS_CLIENT_SECRET", "")

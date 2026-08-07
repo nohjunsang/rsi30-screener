@@ -1,0 +1,66 @@
+--- a/toss_data.py	2026-08-07 06:33:05.571377529 +0000
++++ b/toss_data.py	2026-08-07 06:30:36.512619624 +0000
+@@ -116,22 +116,52 @@
+     last_resp.raise_for_status()  # 마지막 시도도 429였으면 여기서 에러로 던짐
+ 
+ 
++def _alt_symbol(ticker: str):
++    """BRK-B(야후 등에서 흔한 표기) vs BRK.B(토스 등 다른 데이터소스에서
++    쓰는 표기)처럼, 복수클래스 주식은 구분자가 하이픈/마침표로 데이터
++    제공처마다 다르게 쓰이는 경우가 있음. 404 떴을 때 반대쪽 구분자로
++    한 번 더 시도해볼 대안 심볼을 만듦. 둘 다 없으면 None."""
++    if "-" in ticker:
++        return ticker.replace("-", ".")
++    if "." in ticker:
++        return ticker.replace(".", "-")
++    return None
++
++
+ def _fetch_candles_one_ticker(ticker: str, max_pages: int = MAX_PAGES):
+     """티커 하나의 일봉 캔들을 페이지네이션으로 모아서, data.py와 같은
+     형태(Open/High/Low/Close/Volume 컬럼 + 날짜 인덱스)의 DataFrame으로
+     변환. 조회 실패(상장폐지·심볼 오류 등)하면 None 반환 - 호출부가
+-    그 종목만 조용히 스킵할 수 있게."""
++    그 종목만 조용히 스킵할 수 있게.
++
++    첫 페이지에서 404(심볼 못 찾음)가 뜨면, 하이픈/마침표를 바꾼 대안
++    심볼로 한 번 더 시도해봄(BRK-B <-> BRK.B 같은 표기 차이 대응)."""
+     token = _get_access_token()
+     headers = {"Authorization": f"Bearer {token}"}
+ 
++    symbol = ticker
+     all_candles = []
+     before = None
+-    for _ in range(max_pages):
+-        params = {"symbol": ticker, "interval": "1d", "count": 200, "adjusted": "true"}
++    tried_alt = False
++    pages_fetched = 0
++
++    while pages_fetched < max_pages:
++        params = {"symbol": symbol, "interval": "1d", "count": 200, "adjusted": "true"}
+         if before:
+             params["before"] = before
+         try:
+             payload = _request_with_retry(CANDLES_URL, params, headers)
++        except requests.exceptions.HTTPError as e:
++            status = e.response.status_code if e.response is not None else None
++            if status == 404 and not tried_alt and before is None:
++                alt = _alt_symbol(ticker)
++                if alt:
++                    print(f"[toss_data] {ticker} 404 - 대안 심볼 {alt}로 재시도")
++                    symbol = alt
++                    tried_alt = True
++                    continue  # 페이지 수는 그대로 두고 대안 심볼로 다시 시도
++            print(f"[toss_data] {ticker} 캔들 조회 실패: {e}")
++            break
+         except requests.exceptions.RequestException as e:
+             print(f"[toss_data] {ticker} 캔들 조회 실패: {e}")
+             break
+@@ -141,6 +171,7 @@
+         if not candles:
+             break
+         all_candles.extend(candles)
++        pages_fetched += 1
+ 
+         before = page.get("nextBefore")
+         if not before:

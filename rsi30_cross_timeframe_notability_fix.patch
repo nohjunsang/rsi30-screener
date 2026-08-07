@@ -1,0 +1,41 @@
+diff --git a/formatting.py b/formatting.py
+index 89db721..eea5d47 100644
+--- a/formatting.py
++++ b/formatting.py
+@@ -101,6 +101,18 @@ SIGNAL_DIRECTION = {
+ GOOD_THRESHOLD = 3
+ BAD_THRESHOLD = -2
+ 
++# 골든/데드크로스 "상태"는 상승추세냐 하락추세냐 둘 중 하나로 거의 항상
++# 참인 조건이라(신규 전환이 아니라 그냥 지금 상태), 일봉+4H 양쪽에서
++# "확인"돼도 사실상 대부분의 종목이 걸리는 흔한 일치일 뿐 진짜 의미있는
++# 컨플루언스가 아님. 그래서 4H 컨플루언스를 "주목 여부"나 "품질점수
++# 가산점"에 반영할 땐 이것만 빼고 계산함 (표시 줄 자체에는 그대로 나옴 -
++# 참고 정보로만 보여주는 건 문제없어서).
++_TREND_STATE_LABELS = {"골든크로스 상태", "데드크로스 상태"}
++
++
++def _meaningful_cross_signals(cross_signals: list) -> list:
++    return [s for s in (cross_signals or []) if s not in _TREND_STATE_LABELS]
++
+ 
+ def _emoji(signal_type: str) -> str:
+     return SIGNAL_EMOJI.get(signal_type, "•")
+@@ -123,7 +135,7 @@ def _is_notable(ticker_alerts: list) -> bool:
+     a = ticker_alerts[0]
+     if a["signal_type"] in ALWAYS_NOTABLE_TYPES:
+         return True
+-    if a.get("cross_timeframe_signals"):
++    if _meaningful_cross_signals(a.get("cross_timeframe_signals")):
+         return True
+     if a.get("volume_spike"):
+         return True
+@@ -174,7 +186,7 @@ def _compute_quality(ticker_alerts: list):
+         score += overlap_bonus
+         reasons.append(f"신호 {overlap_count}개 동시 겹침")
+ 
+-    if ticker_alerts[0].get("cross_timeframe_signals"):
++    if _meaningful_cross_signals(ticker_alerts[0].get("cross_timeframe_signals")):
+         score += 2
+         reasons.append("일봉+4H 동시 확인(컨플루언스)")
+ 

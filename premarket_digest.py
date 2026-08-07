@@ -27,7 +27,8 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from data import get_scan_universe, download_daily_data, extract_ticker_df, download_latest_quote
+from data import get_scan_universe, download_latest_quote
+from toss_data import download_daily_data, extract_ticker_df
 from engine import scan_current_snapshot
 from formatting import format_alerts
 from notifier import send_telegram

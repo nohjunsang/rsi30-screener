@@ -1,0 +1,227 @@
+"""
+toss_data.py
+토스증권 Open API(https://openapi.tossinvest.com)로 일봉 OHLCV 데이터를
+받아오는 모듈. data.py의 yfinance 기반 download_daily_data()/
+extract_ticker_df()와 함수 이름·호출 방식을 똑같이 맞춰서, 이 모듈을
+쓰는 쪽(alerts.py / premarket_digest.py / kr_open_digest.py)은 import
+줄만 data -> toss_data로 바꾸면 나머지 코드는 그대로 재사용됨.
+
+4시간봉 모니터(intraday_monitor.py)는 아직 안 바꿈 - 토스 API가 캔들을
+1분봉/일봉만 지원해서(시간봉 없음), 4시간봉 리샘플용 데이터가 없기 때문.
+계속 야후파이낸스(data.py) 그대로 씀.
+
+⚠️⚠️ 실행 전 꼭 확인할 것 - 허용 IP 등록 ⚠️⚠️
+토스증권 오픈 API는 WTS(설정 > Open API > 허용 IP 관리)에 등록해둔 IP
+에서만 호출 가능하고, 목록에 없는 IP는 403으로 차단됨. GitHub Actions
+호스팅 실행기는 고정 IP가 아니라 매번 랜덤하게 배정되는 IP 풀을 쓰기
+때문에, 아무 준비 없이 그대로는 GitHub Actions에서 이 모듈이 동작하지
+않을 가능성이 높음(호출마다 403). 아래 순서로 확인해볼 것:
+  1) 로컬 PC(집 IP)에서 먼저 정상 동작하는지 테스트
+  2) GitHub Actions에서 쓰려면: 고정 아웃바운드 IP를 제공하는 프록시
+     서버(저렴한 VPS 등)를 하나 두고 그 IP만 허용 등록 - 또는 자체 IP가
+     고정인 self-hosted runner를 쓰는 방법도 있음
+  3) 안 되면 이 3개 워크플로우만 당분간 로컬 PC의 작업 스케줄러(Windows
+     Task Scheduler)로 돌리는 것도 대안 (다만 "PC 꺼져있어도 동작" 이라는
+     원래 설계 목표는 포기하게 됨)
+
+환경변수(config.py에서 로딩): TOSS_CLIENT_ID, TOSS_CLIENT_SECRET
+"""
+
+import time
+from datetime import datetime, timedelta, timezone
+
+import pandas as pd
+import requests
+
+from config import TOSS_CLIENT_ID, TOSS_CLIENT_SECRET
+
+BASE_URL = "https://openapi.tossinvest.com"
+TOKEN_URL = f"{BASE_URL}/oauth2/token"
+CANDLES_URL = f"{BASE_URL}/api/v1/candles"
+
+# 공식 문서 기준 캔들 조회(MARKET_DATA_CHART 그룹) 한도는 초당 5회.
+# 종목마다 여러 페이지를 연달아 호출하므로, 여유있게 초당 4회로
+# 자체 제한해서 429(rate limit)를 최대한 안 맞도록 함.
+MIN_REQUEST_INTERVAL_SEC = 0.25
+
+# 한 번 호출에 최대 200봉까지만 주는 API라, 최소 250봉(SMA200 계산
+# warmup) 이상을 확보하려고 페이지네이션으로 여러 번 호출함. 3페이지
+# (최대 600봉 ≈ 2.4년치)면 기존 야후파이낸스 버전(LOOKBACK_DAYS="2y")과
+# 비슷한 수준의 히스토리를 확보할 수 있음.
+MAX_PAGES = 3
+
+_token_cache = {"access_token": None, "expires_at": None}
+_last_request_at = 0.0
+
+
+def _throttle():
+    """캔들 API 초당 요청 한도를 넘지 않도록 호출 사이 최소 간격을 보장."""
+    global _last_request_at
+    elapsed = time.monotonic() - _last_request_at
+    if elapsed < MIN_REQUEST_INTERVAL_SEC:
+        time.sleep(MIN_REQUEST_INTERVAL_SEC - elapsed)
+    _last_request_at = time.monotonic()
+
+
+def _get_access_token() -> str:
+    """access token 발급 + 캐싱. 만료 60초 전부터는 캐시를 안 쓰고
+    미리 재발급받아서, 스캔 도중에 토큰이 만료되는 일이 없게 함."""
+    now = datetime.now(timezone.utc)
+    if (
+        _token_cache["access_token"]
+        and _token_cache["expires_at"]
+        and now < _token_cache["expires_at"]
+    ):
+        return _token_cache["access_token"]
+
+    if not TOSS_CLIENT_ID or not TOSS_CLIENT_SECRET:
+        raise RuntimeError(
+            "TOSS_CLIENT_ID / TOSS_CLIENT_SECRET이 비어있음 - 로컬이면 환경변수, "
+            "GitHub Actions면 Secrets 등록 여부를 확인할 것"
+        )
+
+    resp = requests.post(
+        TOKEN_URL,
+        data={
+            "grant_type": "client_credentials",
+            "client_id": TOSS_CLIENT_ID,
+            "client_secret": TOSS_CLIENT_SECRET,
+        },
+        timeout=10,
+    )
+    resp.raise_for_status()
+    payload = resp.json()
+    token = payload["access_token"]
+    expires_in = payload.get("expires_in", 300)
+
+    _token_cache["access_token"] = token
+    _token_cache["expires_at"] = now + timedelta(seconds=max(expires_in - 60, 30))
+    return token
+
+
+def _request_with_retry(url: str, params: dict, headers: dict, max_retries: int = 3) -> dict:
+    """429(rate limit) 응답이면 Retry-After만큼 대기 후 재시도
+    (헤더가 없으면 지수 백오프 1s -> 2s -> 4s로 대체)."""
+    last_resp = None
+    for attempt in range(max_retries + 1):
+        _throttle()
+        resp = requests.get(url, params=params, headers=headers, timeout=10)
+        if resp.status_code == 429:
+            last_resp = resp
+            wait = float(resp.headers.get("Retry-After", 2**attempt))
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        return resp.json()
+    last_resp.raise_for_status()  # 마지막 시도도 429였으면 여기서 에러로 던짐
+
+
+def _alt_symbol(ticker: str):
+    """BRK-B(야후 등에서 흔한 표기) vs BRK.B(토스 등 다른 데이터소스에서
+    쓰는 표기)처럼, 복수클래스 주식은 구분자가 하이픈/마침표로 데이터
+    제공처마다 다르게 쓰이는 경우가 있음. 404 떴을 때 반대쪽 구분자로
+    한 번 더 시도해볼 대안 심볼을 만듦. 둘 다 없으면 None."""
+    if "-" in ticker:
+        return ticker.replace("-", ".")
+    if "." in ticker:
+        return ticker.replace(".", "-")
+    return None
+
+
+def _fetch_candles_one_ticker(ticker: str, max_pages: int = MAX_PAGES):
+    """티커 하나의 일봉 캔들을 페이지네이션으로 모아서, data.py와 같은
+    형태(Open/High/Low/Close/Volume 컬럼 + 날짜 인덱스)의 DataFrame으로
+    변환. 조회 실패(상장폐지·심볼 오류 등)하면 None 반환 - 호출부가
+    그 종목만 조용히 스킵할 수 있게.
+
+    첫 페이지에서 404(심볼 못 찾음)가 뜨면, 하이픈/마침표를 바꾼 대안
+    심볼로 한 번 더 시도해봄(BRK-B <-> BRK.B 같은 표기 차이 대응)."""
+    token = _get_access_token()
+    headers = {"Authorization": f"Bearer {token}"}
+
+    symbol = ticker
+    all_candles = []
+    before = None
+    tried_alt = False
+    pages_fetched = 0
+
+    while pages_fetched < max_pages:
+        params = {"symbol": symbol, "interval": "1d", "count": 200, "adjusted": "true"}
+        if before:
+            params["before"] = before
+        try:
+            payload = _request_with_retry(CANDLES_URL, params, headers)
+        except requests.exceptions.HTTPError as e:
+            status = e.response.status_code if e.response is not None else None
+            if status == 404 and not tried_alt and before is None:
+                alt = _alt_symbol(ticker)
+                if alt:
+                    print(f"[toss_data] {ticker} 404 - 대안 심볼 {alt}로 재시도")
+                    symbol = alt
+                    tried_alt = True
+                    continue  # 페이지 수는 그대로 두고 대안 심볼로 다시 시도
+            print(f"[toss_data] {ticker} 캔들 조회 실패: {e}")
+            break
+        except requests.exceptions.RequestException as e:
+            print(f"[toss_data] {ticker} 캔들 조회 실패: {e}")
+            break
+
+        page = payload.get("result", {})
+        candles = page.get("candles", [])
+        if not candles:
+            break
+        all_candles.extend(candles)
+        pages_fetched += 1
+
+        before = page.get("nextBefore")
+        if not before:
+            break
+
+    if not all_candles:
+        return None
+
+    df = pd.DataFrame(all_candles)
+    df = df.rename(
+        columns={
+            "openPrice": "Open",
+            "highPrice": "High",
+            "lowPrice": "Low",
+            "closePrice": "Close",
+            "volume": "Volume",
+        }
+    )
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = df.set_index("timestamp").sort_index()
+    df = df[["Open", "High", "Low", "Close", "Volume"]].astype(float)
+    # 페이지 경계에서 같은 날짜 봉이 중복될 수 있어서 제거
+    df = df[~df.index.duplicated(keep="first")]
+    return df
+
+
+def download_daily_data(tickers: list) -> dict:
+    """data.py의 download_daily_data()와 이름·역할은 같지만, 반환 형식은
+    yfinance MultiIndex DataFrame이 아니라 {ticker: DataFrame} dict임
+    (토스 캔들 API가 종목 하나씩만 조회되는 구조라 배치 다운로드가 없음).
+    호출부는 그대로 extract_ticker_df(data, ticker)로 꺼내 쓰면 되므로
+    실제 사용 코드는 안 바뀜."""
+    result = {}
+    skipped = []
+    for ticker in tickers:
+        df = _fetch_candles_one_ticker(ticker)
+        if df is None or df.empty:
+            skipped.append(ticker)
+            continue
+        result[ticker] = df
+
+    if skipped:
+        preview = ", ".join(skipped[:10]) + (" ..." if len(skipped) > 10 else "")
+        print(f"[toss_data] 조회 실패/데이터 없음으로 {len(skipped)}개 종목 스킵: {preview}")
+
+    return result
+
+
+def extract_ticker_df(data: dict, ticker: str):
+    """download_daily_data()가 돌려준 dict에서 종목 하나를 꺼냄.
+    data.py의 extract_ticker_df()와 이름·시그니처가 같아서 호출부 코드가
+    그대로 재사용됨(내부 구현만 dict 조회로 단순함)."""
+    return data.get(ticker)
