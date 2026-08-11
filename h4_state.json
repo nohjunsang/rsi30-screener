@@ -4,7 +4,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "below",
-    "divergence": "none",
+    "divergence": "bullish",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
   },
@@ -108,10 +108,10 @@
     "bb_squeeze_state": "normal"
   },
   "APD": {
-    "rsi_zone": "overbought",
+    "rsi_zone": "normal",
     "sma120": "normal",
     "sma200": "normal",
-    "ichimoku_position": "above",
+    "ichimoku_position": "top",
     "divergence": "none",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
@@ -155,7 +155,7 @@
   "AXP": {
     "rsi_zone": "normal",
     "sma120": "normal",
-    "sma200": "normal",
+    "sma200": "touching",
     "ichimoku_position": "top",
     "divergence": "none",
     "sma_cross": "above",
@@ -175,7 +175,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "above",
-    "divergence": "none",
+    "divergence": "bearish",
     "sma_cross": "above",
     "bb_squeeze_state": "squeeze"
   },
@@ -184,7 +184,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "above",
-    "divergence": "none",
+    "divergence": "bearish",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
   },
@@ -317,7 +317,7 @@
   "COST": {
     "rsi_zone": "normal",
     "sma120": "touching",
-    "sma200": "normal",
+    "sma200": "touching",
     "ichimoku_position": "bottom",
     "divergence": "none",
     "sma_cross": "above",
@@ -325,7 +325,7 @@
   },
   "CRH": {
     "rsi_zone": "normal",
-    "sma120": "normal",
+    "sma120": "touching",
     "sma200": "normal",
     "ichimoku_position": "top",
     "divergence": "none",
@@ -337,7 +337,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "above",
-    "divergence": "none",
+    "divergence": "bearish",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
   },
@@ -364,7 +364,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "below",
-    "divergence": "bullish",
+    "divergence": "none",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
   },
@@ -524,7 +524,7 @@
   "GEV": {
     "rsi_zone": "normal",
     "sma120": "normal",
-    "sma200": "normal",
+    "sma200": "touching",
     "ichimoku_position": "top",
     "divergence": "none",
     "sma_cross": "below",
@@ -561,7 +561,7 @@
     "rsi_zone": "normal",
     "sma120": "normal",
     "sma200": "normal",
-    "ichimoku_position": "above",
+    "ichimoku_position": "top",
     "divergence": "none",
     "sma_cross": "below",
     "bb_squeeze_state": "normal"
@@ -570,7 +570,7 @@
     "rsi_zone": "normal",
     "sma120": "normal",
     "sma200": "normal",
-    "ichimoku_position": "inside",
+    "ichimoku_position": "bottom",
     "divergence": "none",
     "sma_cross": "below",
     "bb_squeeze_state": "squeeze"
@@ -607,7 +607,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "above",
-    "divergence": "none",
+    "divergence": "bearish",
     "sma_cross": "below",
     "bb_squeeze_state": "squeeze"
   },
@@ -651,7 +651,7 @@
     "rsi_zone": "normal",
     "sma120": "normal",
     "sma200": "normal",
-    "ichimoku_position": "inside",
+    "ichimoku_position": "top",
     "divergence": "none",
     "sma_cross": "below",
     "bb_squeeze_state": "squeeze"
@@ -748,9 +748,9 @@
   },
   "MDLZ": {
     "rsi_zone": "normal",
-    "sma120": "touching",
+    "sma120": "normal",
     "sma200": "touching",
-    "ichimoku_position": "below",
+    "ichimoku_position": "bottom",
     "divergence": "none",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
@@ -813,7 +813,7 @@
     "rsi_zone": "normal",
     "sma120": "normal",
     "sma200": "normal",
-    "ichimoku_position": "top",
+    "ichimoku_position": "above",
     "divergence": "none",
     "sma_cross": "below",
     "bb_squeeze_state": "squeeze"
@@ -886,7 +886,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "above",
-    "divergence": "none",
+    "divergence": "bearish",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
   },
@@ -942,7 +942,7 @@
     "ichimoku_position": "bottom",
     "divergence": "none",
     "sma_cross": "below",
-    "bb_squeeze_state": "normal"
+    "bb_squeeze_state": "squeeze"
   },
   "PFE": {
     "rsi_zone": "normal",
@@ -1003,13 +1003,13 @@
     "sma120": "touching",
     "sma200": "normal",
     "ichimoku_position": "below",
-    "divergence": "none",
+    "divergence": "bullish",
     "sma_cross": "above",
     "bb_squeeze_state": "squeeze"
   },
   "PNC": {
     "rsi_zone": "normal",
-    "sma120": "touching",
+    "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "top",
     "divergence": "none",
@@ -1018,7 +1018,7 @@
   },
   "PSA": {
     "rsi_zone": "normal",
-    "sma120": "normal",
+    "sma120": "touching",
     "sma200": "normal",
     "ichimoku_position": "top",
     "divergence": "none",
@@ -1059,7 +1059,7 @@
     "ichimoku_position": "below",
     "divergence": "none",
     "sma_cross": "above",
-    "bb_squeeze_state": "squeeze"
+    "bb_squeeze_state": "normal"
   },
   "SCHW": {
     "rsi_zone": "normal",
@@ -1092,7 +1092,7 @@
     "rsi_zone": "normal",
     "sma120": "normal",
     "sma200": "normal",
-    "ichimoku_position": "bottom",
+    "ichimoku_position": "inside",
     "divergence": "none",
     "sma_cross": "below",
     "bb_squeeze_state": "squeeze"
@@ -1127,7 +1127,7 @@
   "SPGI": {
     "rsi_zone": "normal",
     "sma120": "normal",
-    "sma200": "normal",
+    "sma200": "touching",
     "ichimoku_position": "below",
     "divergence": "none",
     "sma_cross": "above",
@@ -1156,7 +1156,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "above",
-    "divergence": "none",
+    "divergence": "bearish",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
   },
@@ -1179,7 +1179,7 @@
     "bb_squeeze_state": "normal"
   },
   "TMO": {
-    "rsi_zone": "normal",
+    "rsi_zone": "overbought",
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "above",
@@ -1201,7 +1201,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "inside",
-    "divergence": "none",
+    "divergence": "bearish",
     "sma_cross": "below",
     "bb_squeeze_state": "squeeze"
   },
@@ -1210,7 +1210,7 @@
     "sma120": "normal",
     "sma200": "normal",
     "ichimoku_position": "bottom",
-    "divergence": "none",
+    "divergence": "bullish",
     "sma_cross": "above",
     "bb_squeeze_state": "normal"
   },
@@ -1254,7 +1254,7 @@
     "rsi_zone": "normal",
     "sma120": "touching",
     "sma200": "normal",
-    "ichimoku_position": "below",
+    "ichimoku_position": "bottom",
     "divergence": "none",
     "sma_cross": "above",
     "bb_squeeze_state": "squeeze"
@@ -1360,7 +1360,7 @@
   },
   "WFC": {
     "rsi_zone": "normal",
-    "sma120": "normal",
+    "sma120": "touching",
     "sma200": "normal",
     "ichimoku_position": "above",
     "divergence": "none",
@@ -1371,7 +1371,7 @@
     "rsi_zone": "normal",
     "sma120": "normal",
     "sma200": "normal",
-    "ichimoku_position": "above",
+    "ichimoku_position": "top",
     "divergence": "none",
     "sma_cross": "below",
     "bb_squeeze_state": "squeeze"
