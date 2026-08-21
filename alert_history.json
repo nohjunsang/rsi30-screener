@@ -258739,5 +258739,618 @@
     ],
     "cross_timeframe_label": "일봉",
     "logged_at_utc": "2026-08-21T21:33:57.214270+00:00"
+  },
+  {
+    "ticker": "ABBV",
+    "signal_type": "RSI 과매수 진입",
+    "detail": "RSI(14) 71.44 | 거래량 4.54배",
+    "close": 266.48,
+    "change_pct": 0.57,
+    "market_cap_B": 462.7,
+    "cloud_position": "above",
+    "volume_spike": true,
+    "active_signals": [
+      {
+        "label": "RSI 과매수",
+        "is_new": true
+      },
+      {
+        "label": "RSI 약세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "ABBV",
+    "signal_type": "RSI 약세 다이버전스",
+    "detail": "가격 266.14→266.48 (상승) / RSI 83.56→71.44 (하락) | 거래량 4.54배",
+    "close": 266.48,
+    "change_pct": 0.57,
+    "market_cap_B": 462.7,
+    "cloud_position": "above",
+    "volume_spike": true,
+    "active_signals": [
+      {
+        "label": "RSI 과매수",
+        "is_new": true
+      },
+      {
+        "label": "RSI 약세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "ABT",
+    "signal_type": "RSI 과매수 진입",
+    "detail": "RSI(14) 71.3 | 거래량 6.26배",
+    "close": 116.66,
+    "change_pct": 0.02,
+    "market_cap_B": 197.5,
+    "cloud_position": "above",
+    "volume_spike": true,
+    "active_signals": [
+      {
+        "label": "RSI 과매수",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "SMA200 터치",
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "ADP",
+    "signal_type": "RSI 약세 다이버전스",
+    "detail": "가격 281.14→280.81 (상승) / RSI 63.49→62.04 (하락)",
+    "close": 280.81,
+    "change_pct": 0.27,
+    "market_cap_B": 110.9,
+    "cloud_position": "above",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 약세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "APH",
+    "signal_type": "일목구름대 상단 터치",
+    "detail": "구름대 157.2~157.61",
+    "close": 156.2,
+    "change_pct": -0.53,
+    "market_cap_B": 188.8,
+    "cloud_position": "top",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "일목구름대 상단 터치",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "BLK",
+    "signal_type": "일목구름대 상단 터치",
+    "detail": "구름대 1110.18~1147.76",
+    "close": 1156.55,
+    "change_pct": 0.05,
+    "market_cap_B": 176.5,
+    "cloud_position": "top",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "일목구름대 상단 터치",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      },
+      {
+        "label": "볼린저밴드 스퀴즈",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "BX",
+    "signal_type": "일목구름대 상단 터치",
+    "detail": "구름대 137.76~143.82 | 거래량 4.26배",
+    "close": 144.07,
+    "change_pct": 0.48,
+    "market_cap_B": 106.1,
+    "cloud_position": "top",
+    "volume_spike": true,
+    "active_signals": [
+      {
+        "label": "일목구름대 상단 터치",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      },
+      {
+        "label": "볼린저밴드 스퀴즈",
+        "is_new": true
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "BX",
+    "signal_type": "볼린저밴드 스퀴즈 진입",
+    "detail": "밴드폭 5.75% (최근 저점권) - 변동성 확대 임박 가능 | 거래량 4.26배",
+    "close": 144.07,
+    "change_pct": 0.48,
+    "market_cap_B": 106.1,
+    "cloud_position": "top",
+    "volume_spike": true,
+    "active_signals": [
+      {
+        "label": "일목구름대 상단 터치",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      },
+      {
+        "label": "볼린저밴드 스퀴즈",
+        "is_new": true
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "CRM",
+    "signal_type": "RSI 약세 다이버전스",
+    "detail": "가격 209.45→209.16 (상승) / RSI 68.06→67.29 (하락)",
+    "close": 209.16,
+    "change_pct": 0.0,
+    "market_cap_B": 168.2,
+    "cloud_position": "above",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 약세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "DHR",
+    "signal_type": "RSI 과매수 회복",
+    "detail": "RSI(14) 68.35",
+    "close": 218.21,
+    "change_pct": -0.31,
+    "market_cap_B": 151.8,
+    "cloud_position": "above",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "DUK",
+    "signal_type": "RSI 강세 다이버전스",
+    "detail": "가격 119.85→120.01 (하락) / RSI 28.73→30.16 (상승)",
+    "close": 120.01,
+    "change_pct": 0.13,
+    "market_cap_B": 95.7,
+    "cloud_position": "below",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 강세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "데드크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "SMA200 터치",
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "GLW",
+    "signal_type": "RSI 강세 다이버전스",
+    "detail": "가격 149.48→149.65 (하락) / RSI 35.19→35.75 (상승) | 거래량 2.74배",
+    "close": 149.65,
+    "change_pct": -0.11,
+    "market_cap_B": 130.5,
+    "cloud_position": "inside",
+    "volume_spike": true,
+    "active_signals": [
+      {
+        "label": "RSI 강세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "데드크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "HWM",
+    "signal_type": "RSI 강세 다이버전스",
+    "detail": "가격 271.71→271.76 (하락) / RSI 33.79→33.89 (상승)",
+    "close": 271.76,
+    "change_pct": 0.02,
+    "market_cap_B": 109.1,
+    "cloud_position": "below",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 강세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "RSI 약세 다이버전스",
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "JPM",
+    "signal_type": "RSI 강세 다이버전스",
+    "detail": "가격 351.64→351.8 (하락) / RSI 33.06→33.67 (상승) | 거래량 1.73배",
+    "close": 351.8,
+    "change_pct": 0.05,
+    "market_cap_B": 934.5,
+    "cloud_position": "above",
+    "volume_spike": true,
+    "active_signals": [
+      {
+        "label": "SMA120 터치",
+        "is_new": false
+      },
+      {
+        "label": "RSI 강세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "NUE",
+    "signal_type": "RSI 과매도 진입",
+    "detail": "RSI(14) 29.7",
+    "close": 243.08,
+    "change_pct": -0.19,
+    "market_cap_B": 54.6,
+    "cloud_position": "below",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 과매도",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "RSI 과매수",
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "PEP",
+    "signal_type": "RSI 약세 다이버전스",
+    "detail": "가격 143.48→143.26 (상승) / RSI 66.6→64.6 (하락)",
+    "close": 143.26,
+    "change_pct": -0.15,
+    "market_cap_B": 193.9,
+    "cloud_position": "above",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 약세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "데드크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "PG",
+    "signal_type": "일목구름대 하단 터치",
+    "detail": "구름대 146.19~146.46",
+    "close": 144.84,
+    "change_pct": 0.1,
+    "market_cap_B": 332.3,
+    "cloud_position": "bottom",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "일목구름대 하단 터치",
+        "is_new": true
+      },
+      {
+        "label": "데드크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "SMA120 터치",
+      "SMA200 터치",
+      "일목구름대 상단 터치",
+      "골든크로스 상태",
+      "볼린저밴드 스퀴즈"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "SO",
+    "signal_type": "RSI 과매도 회복",
+    "detail": "RSI(14) 31.9",
+    "close": 89.52,
+    "change_pct": 0.62,
+    "market_cap_B": 105.2,
+    "cloud_position": "below",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "데드크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "일목구름대 하단 터치",
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "SYK",
+    "signal_type": "일목구름대 하단 터치",
+    "detail": "구름대 333.38~338.88",
+    "close": 330.55,
+    "change_pct": 0.4,
+    "market_cap_B": 125.7,
+    "cloud_position": "bottom",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "SMA120 터치",
+        "is_new": false
+      },
+      {
+        "label": "일목구름대 하단 터치",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "TMO",
+    "signal_type": "RSI 과매수 회복",
+    "detail": "RSI(14) 69.27",
+    "close": 627.0,
+    "change_pct": -0.11,
+    "market_cap_B": 232.0,
+    "cloud_position": "above",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "RSI 약세 다이버전스",
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "TSLA",
+    "signal_type": "RSI 약세 다이버전스",
+    "detail": "가격 363.37→363.1 (상승) / RSI 76.08→75.31 (하락)",
+    "close": 363.1,
+    "change_pct": 0.06,
+    "market_cap_B": 1363.1,
+    "cloud_position": "below",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 과매수",
+        "is_new": false
+      },
+      {
+        "label": "SMA200 터치",
+        "is_new": false
+      },
+      {
+        "label": "RSI 약세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "데드크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "TSLQ",
+    "signal_type": "RSI 강세 다이버전스",
+    "detail": "가격 19.4→19.43 (하락) / RSI 23.91→24.77 (상승)",
+    "close": 19.43,
+    "change_pct": -0.21,
+    "market_cap_B": null,
+    "cloud_position": "below",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "RSI 과매도",
+        "is_new": false
+      },
+      {
+        "label": "RSI 강세 다이버전스",
+        "is_new": true
+      },
+      {
+        "label": "골든크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "데드크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
+  },
+  {
+    "ticker": "WMB",
+    "signal_type": "일목구름대 하단 터치",
+    "detail": "구름대 70.06~72.56",
+    "close": 70.51,
+    "change_pct": -0.0,
+    "market_cap_B": 87.7,
+    "cloud_position": "bottom",
+    "volume_spike": false,
+    "active_signals": [
+      {
+        "label": "일목구름대 하단 터치",
+        "is_new": true
+      },
+      {
+        "label": "데드크로스 상태",
+        "is_new": false
+      }
+    ],
+    "cross_timeframe_signals": [
+      "골든크로스 상태"
+    ],
+    "cross_timeframe_label": "일봉",
+    "logged_at_utc": "2026-08-21T21:55:47.344513+00:00"
   }
 ]
