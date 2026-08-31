@@ -6,3 +6,6 @@ intraday_log.txt
 backtest_events.csv
 backtest_summary.csv
 backtest_summary.png
+.env
+venv/
+logs/

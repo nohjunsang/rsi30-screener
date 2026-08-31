@@ -18,6 +18,7 @@ engine.py
 "지금 이 순간 동시에 활성 상태인" 모든 신호(신규 + 기존 지속중인 것 포함)를
 스냅샷으로 같이 붙여줌.
 """
+import subprocess
 
 from signals import compute_signals
 from state import StateStore
@@ -164,6 +165,7 @@ def scan(
     enable_cloud_breakout: bool = False,
     cross_state_filename: str = None,
     cross_label: str = "",
+    market: str = "US_STOCK",
 ) -> tuple:
     """
     tickers: 스캔 대상 티커 리스트
@@ -225,6 +227,7 @@ def scan(
         if rsi_new:
             if rsi_zone == "oversold":
                 rsi_alert_label = "RSI 과매도 진입"
+                subprocess.Popen(["/home/aayoung1018/ai-trading-advisor/venv/bin/python", "/home/aayoung1018/ai-trading-advisor/notify.py", ticker, market], stdout=open("/home/aayoung1018/ai-trading-advisor/logs/auto_verify.log", "a"), stderr=subprocess.STDOUT)
             elif rsi_zone == "overbought":
                 rsi_alert_label = "RSI 과매수 진입"
             elif rsi_zone == "normal":
